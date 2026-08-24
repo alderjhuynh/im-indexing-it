@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>lexie</title>
+
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="alternate icon" type="image/png" href="favicon.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="bg-wash" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="nav" id="top">
+  <a class="nav__mark" href="#home">lexie</a>
+  <button class="nav__toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+  <nav class="nav__links" id="navLinks">
+    <a href="#home" class="nav__link" data-section="home">Home</a>
+    <a href="#about" class="nav__link" data-section="about">About</a>
+    <a href="#domains" class="nav__link" data-section="domains">Sites</a>
+    <a href="#links" class="nav__link" data-section="links">Elsewhere</a>
+    <a href="#contact" class="nav__link" data-section="contact">Contact</a>
+  </nav>
+</header>
+
+<main>
+  <div class="fade-wrap">
+
+    <section class="hero" id="home">
+      <div class="hero__inner">
+        <p class="eyebrow">hi, i'm</p>
+        <h1 class="hero__title"><em>Lexie</em></h1>
+        <p class="hero__tagline">professional silly goose, part-time composer, full-time yapper</p>
+        <a href="#about" class="scroll-cue" aria-label="Scroll to about section">
+          <span class="scroll-cue__drop"></span>
+          <span class="scroll-cue__label">scroll</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="about" id="about">
+      <div class="about__inner">
+        <p class="eyebrow">about me</p>
+        <h2 class="section-title">Who?</h2>
+        <div class="about__grid">
+          <ul class="facts">
+            <li><span class="facts__key">pronouns</span><span class="facts__val">She/It</span></li>
+            <li><span class="facts__key">location</span><span class="facts__val">US</span></li>
+            <li><span class="facts__key">doing</span><span class="facts__val">music, code, worldbuilding</span></li>
+            <li><span class="facts__key">status</span><span class="facts__val">probably awake</span></li>
+          </ul>
+          <div class="about__copy">
+            <p>Intro</p>
+            <p>ummm, I kinda forgot everything about myself, I'll update the webpage when I can think again, lol</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <section class="domains" id="domains">
+    <div class="section-inner">
+      <p class="eyebrow">auraea.fyi</p>
+      <h2 class="section-title">Places I've built</h2>
+      <p class="section-lede">Side projects living on other corners of the domain.</p>
+
+      <ul class="link-list">
+        <li>
+          <a href="https://www.auraea.fyi" target="_blank" rel="noopener">
+            <span class="drop"></span>Atlas
+            <small>a field atlas of lands, tongues, peoples, and powers</small>
+          </a>
+        </li>
+        <li>
+          <a href="https://stories.auraea.fyi" target="_blank" rel="noopener">
+            <span class="drop"></span>Inkwell
+            <small>stories, serials, and scraps of writing</small>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="links" id="links">
+    <div class="section-inner">
+      <p class="eyebrow">find me</p>
+      <h2 class="section-title">Elsewhere</h2>
+
+      <ul class="link-list">
+        <li>
+          <a href="https://github.com/alderjhuynh" target="_blank" rel="noopener">
+            <span class="drop"></span>GitHub
+            <small>@alderjhuynh</small>
+          </a>
+        </li>
+        <li>
+          <a href="#" id="nothingElse" target="_self" rel="noopener">
+            <span class="drop"></span>There's nothing else...
+            <small>;-;</small>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <footer class="contact" id="contact">
+    <div class="section-inner">
+      <div class="socials">
+        <a href="https://github.com/alderjhuynh" target="_blank" rel="noopener" aria-label="GitHub">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5A11.5 11.5 0 0 0 .5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56v-1.97c-3.2.7-3.87-1.54-3.87-1.54-.52-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.69 1.25 3.35.96.1-.75.4-1.25.72-1.54-2.55-.29-5.23-1.28-5.23-5.68 0-1.26.45-2.28 1.18-3.09-.12-.29-.51-1.46.11-3.05 0 0 .96-.31 3.15 1.18a10.9 10.9 0 0 1 5.74 0c2.19-1.49 3.15-1.18 3.15-1.18.62 1.59.23 2.76.11 3.05.73.81 1.18 1.83 1.18 3.09 0 4.41-2.69 5.38-5.25 5.67.41.35.77 1.05.77 2.12v3.14c0 .31.21.68.8.56A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5Z"/></svg>
+        </a>
+      </div>
+
+      <p class="fine-print" id="finePrint"><span class="fine-print__text" id="finePrintText"><span class="copyright-mark" id="copyrightMark" role="button" tabindex="0">&copy;</span> <span id="year"></span> lexie. Site built with care :)</span></p>
+    </div>
+  </footer>
+
+</main>
+
+<div class="nothing-overlay" id="nothingOverlay" role="dialog" aria-modal="true" aria-labelledby="nothingOverlayText" hidden>
+  <div class="nothing-overlay__card">
+    <p class="nothing-overlay__text" id="nothingOverlayText">Why did you click on this, I told you there was nothing else...</p>
+    <button class="nothing-overlay__close" id="nothingOverlayClose" type="button">fine, I'll go back</button>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
