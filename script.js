@@ -5,6 +5,109 @@
   const canvas = document.getElementById('bgCanvas');
   const edgeRight = document.getElementById('edgeRight');
   const marquee = document.getElementById('marquee');
+  const themeSwitcher = document.getElementById('themeSwitcher');
+  const themeSwitcherMobile = document.getElementById('themeSwitcherMobile');
+  const stageEl = document.querySelector('.hero .stage') || document.querySelector('.stage');
+  const THEMES = [
+    { id: 'impact', label: 'impact' },
+    { id: 'pastoral', label: 'pastoral' },
+  ];
+  let currentTheme = 'impact';
+  const STORAGE_KEY = 'auraea-theme';
+
+  function applyTheme(theme){
+    const isInitial = !document.body.dataset.theme;
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (isInitial || prefersReduced){
+      document.body.dataset.theme = theme;
+      currentTheme = theme;
+      try{ localStorage.setItem(STORAGE_KEY, theme); }catch(_){}
+      updateThemeSwitcher();
+      return Promise.resolve();
+    }
+    if (document.startViewTransition){
+      try{
+        const vt = document.startViewTransition(() => {
+          document.body.dataset.theme = theme;
+          currentTheme = theme;
+        });
+        try{ localStorage.setItem(STORAGE_KEY, theme); }catch(_){}
+        updateThemeSwitcher();
+        return vt.finished.catch(() => {});
+      }catch(_){}
+    }
+    return new Promise((resolve) => {
+      const el = stageEl || canvas;
+      if (!el){
+        document.body.dataset.theme = theme;
+        currentTheme = theme;
+        try{ localStorage.setItem(STORAGE_KEY, theme); }catch(_){}
+        updateThemeSwitcher();
+        resolve();
+        return;
+      }
+      const prev = el.style.transition;
+      el.style.transition = 'opacity 220ms ease';
+      el.style.opacity = '0.18';
+      setTimeout(() => {
+        document.body.dataset.theme = theme;
+        currentTheme = theme;
+        try{ localStorage.setItem(STORAGE_KEY, theme); }catch(_){}
+        updateThemeSwitcher();
+        requestAnimationFrame(() => {
+          el.style.opacity = '1';
+          setTimeout(() => {
+            el.style.transition = prev;
+            if (!el.style.transition) el.style.removeProperty('transition');
+            el.style.removeProperty('opacity');
+            resolve();
+          }, 380);
+        });
+      }, 220);
+    });
+  }
+
+  function renderThemeSwitcher(){
+    const containers = [themeSwitcher, themeSwitcherMobile].filter(Boolean);
+    if (!containers.length) return;
+    containers.forEach(container => {
+      container.innerHTML = '';
+      THEMES.forEach(t => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = t.label;
+        btn.dataset.theme = t.id;
+        btn.classList.toggle('active', t.id === currentTheme);
+        btn.setAttribute('aria-pressed', t.id === currentTheme ? 'true' : 'false');
+        btn.addEventListener('click', () => {
+          if (t.id === currentTheme) return;
+          applyTheme(t.id);
+        });
+        container.appendChild(btn);
+      });
+    });
+  }
+
+  function updateThemeSwitcher(){
+    [themeSwitcher, themeSwitcherMobile].forEach(container => {
+      if (!container) return;
+      [...container.children].forEach(btn => {
+        const isActive = btn.dataset.theme === currentTheme;
+        btn.classList.toggle('active', isActive);
+        btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+      });
+    });
+  }
+
+  function initTheme(){
+    let stored = null;
+    try{ stored = localStorage.getItem(STORAGE_KEY); }catch(_){}
+    const initial = THEMES.find(t => t.id === stored) ? stored : 'impact';
+    document.body.dataset.theme = initial;
+    currentTheme = initial;
+    renderThemeSwitcher();
+  }
+  initTheme();
 
   function mulberry32(seed) {
     return function () {
@@ -44,7 +147,7 @@
     ctx2d = canvas.getContext('2d');
   }
 
-  function drawAmbient(t) {
+  function drawImpact(t) {
     if (!ctx2d) return;
     const w = canvas.width, h = canvas.height;
     ctx2d.clearRect(0, 0, w, h);
@@ -94,6 +197,86 @@
     ctx2d.moveTo(w * 0.42, 0);
     ctx2d.lineTo(w * 1.0, h * 0.58);
     ctx2d.stroke();
+  }
+
+  function drawPastoral(t) {
+    if (!ctx2d) return;
+    const w = canvas.width, h = canvas.height;
+    ctx2d.clearRect(0, 0, w, h);
+    const wash = ctx2d.createLinearGradient(0, 0, 0, h);
+    wash.addColorStop(0, 'rgba(154,107,58,0.05)');
+    wash.addColorStop(1, 'rgba(122,84,44,0.16)');
+    ctx2d.fillStyle = wash;
+    ctx2d.fillRect(0, 0, w, h);
+
+    const scale = w / 1000;
+    const breath = 0.9 + Math.sin(t * 0.22) * 0.12;
+    for (const c of bgCircles) {
+      const cx = w * c.xFrac, cy = h * c.yFrac;
+      const wobble = Math.sin(t * c.speed * 0.7 + c.phase) * 0.15 + 1;
+      const rad = Math.max(1, c.rBase * scale * wobble * breath * 0.9);
+      ctx2d.globalAlpha = c.alpha * 0.55;
+      ctx2d.strokeStyle = 'rgba(43,36,24,0.35)';
+      ctx2d.fillStyle = 'rgba(43,36,24,0.12)';
+      if (c.filled) {
+        ctx2d.beginPath();
+        ctx2d.arc(cx, cy, rad, 0, Math.PI * 2);
+        ctx2d.fill();
+      } else {
+        ctx2d.lineWidth = c.lineW * 0.9;
+        ctx2d.beginPath();
+        ctx2d.arc(cx, cy, rad, 0, Math.PI * 2);
+        ctx2d.stroke();
+      }
+    }
+    ctx2d.globalAlpha = 1;
+
+    const sunX = w * 0.82, sunY = h * 0.2;
+    const rings = 11;
+    for (let i = 0; i < rings; i++) {
+      const radBase = (w * 0.018) + i * (w * 0.021);
+      const wobble = Math.sin(t * 0.12 + i * 0.6) * 2;
+      const rad = Math.max(1, radBase * 0.9 + wobble);
+      ctx2d.globalAlpha = 0.5 - (i / rings) * 0.42;
+      ctx2d.strokeStyle = 'rgba(184,138,74,0.95)';
+      ctx2d.lineWidth = 1;
+      ctx2d.beginPath();
+      ctx2d.arc(sunX, sunY, rad, 0, Math.PI * 2);
+      ctx2d.stroke();
+    }
+    const coreBase = w * 0.012;
+    const corePulse = 0.9 + Math.sin(t * 0.4) * 0.08;
+    const coreR = Math.max(1, coreBase * corePulse);
+    ctx2d.globalAlpha = 0.18;
+    ctx2d.fillStyle = 'rgba(212,168,102,0.9)';
+    ctx2d.beginPath();
+    ctx2d.arc(sunX, sunY, coreR * 2.6, 0, Math.PI * 2);
+    ctx2d.fill();
+    ctx2d.globalAlpha = 0.75;
+    ctx2d.fillStyle = 'rgba(212,168,102,0.95)';
+    ctx2d.beginPath();
+    ctx2d.arc(sunX, sunY, coreR, 0, Math.PI * 2);
+    ctx2d.fill();
+    ctx2d.globalAlpha = 1;
+
+    const baseY = h * 0.7;
+    for (let i = 0; i < 3; i++) {
+      const amp = 8 * (1 - i * 0.28);
+      const yOff = baseY + i * h * 0.07;
+      ctx2d.strokeStyle = `rgba(43,36,24,${0.4 - i * 0.1})`;
+      ctx2d.lineWidth = 1.4;
+      ctx2d.beginPath();
+      for (let x = 0; x <= w; x += 6) {
+        const y = yOff + Math.sin(x * 0.0032 + t * (0.08 + i * 0.02) + i * 2.1) * amp;
+        if (x === 0) ctx2d.moveTo(x, y); else ctx2d.lineTo(x, y);
+      }
+      ctx2d.stroke();
+    }
+  }
+
+  function drawAmbient(t){
+    if (currentTheme === 'pastoral') drawPastoral(t);
+    else drawImpact(t);
   }
 
   function ambientLoop() {
