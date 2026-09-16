@@ -10,18 +10,40 @@
   const stageEl = document.querySelector('.hero .stage') || document.querySelector('.stage');
   const THEMES = [
     { id: 'impact', label: 'impact' },
-    { id: 'pastoral', label: 'pastoral' },
+    { id: 'desert', label: 'desert' },
   ];
   let currentTheme = 'impact';
   const STORAGE_KEY = 'auraea-theme';
 
+  function getThemeFromURL(){
+    try{
+      const params = new URLSearchParams(window.location.search);
+      const raw = params.get('theme');
+      if (!raw) return null;
+      const normalized = raw.trim().toLowerCase();
+      return THEMES.find(t => t.id === normalized)?.id || null;
+    }catch(_){ return null; }
+  }
+
+  function syncThemeToURL(theme){
+    try{
+      const url = new URL(window.location.href);
+      url.searchParams.set('theme', theme);
+      history.replaceState(null, '', url.pathname + url.search + url.hash);
+    }catch(_){}
+  }
+
   function applyTheme(theme){
     const isInitial = !document.body.dataset.theme;
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const persist = () => {
+      try{ localStorage.setItem(STORAGE_KEY, theme); }catch(_){}
+      syncThemeToURL(theme);
+    };
     if (isInitial || prefersReduced){
       document.body.dataset.theme = theme;
       currentTheme = theme;
-      try{ localStorage.setItem(STORAGE_KEY, theme); }catch(_){}
+      persist();
       updateThemeSwitcher();
       return Promise.resolve();
     }
@@ -31,7 +53,7 @@
           document.body.dataset.theme = theme;
           currentTheme = theme;
         });
-        try{ localStorage.setItem(STORAGE_KEY, theme); }catch(_){}
+        persist();
         updateThemeSwitcher();
         return vt.finished.catch(() => {});
       }catch(_){}
@@ -41,7 +63,7 @@
       if (!el){
         document.body.dataset.theme = theme;
         currentTheme = theme;
-        try{ localStorage.setItem(STORAGE_KEY, theme); }catch(_){}
+        persist();
         updateThemeSwitcher();
         resolve();
         return;
@@ -52,7 +74,7 @@
       setTimeout(() => {
         document.body.dataset.theme = theme;
         currentTheme = theme;
-        try{ localStorage.setItem(STORAGE_KEY, theme); }catch(_){}
+        persist();
         updateThemeSwitcher();
         requestAnimationFrame(() => {
           el.style.opacity = '1';
@@ -102,12 +124,26 @@
   function initTheme(){
     let stored = null;
     try{ stored = localStorage.getItem(STORAGE_KEY); }catch(_){}
-    const initial = THEMES.find(t => t.id === stored) ? stored : 'impact';
+    const urlTheme = getThemeFromURL();
+    const storedTheme = THEMES.find(t => t.id === stored) ? stored : null;
+    const initial = urlTheme || storedTheme || 'impact';
     document.body.dataset.theme = initial;
     currentTheme = initial;
+    if (urlTheme){
+      try{ localStorage.setItem(STORAGE_KEY, urlTheme); }catch(_){}
+      try{
+        const raw = new URLSearchParams(window.location.search).get('theme');
+        if (raw !== urlTheme) syncThemeToURL(urlTheme);
+      }catch(_){}
+    }
     renderThemeSwitcher();
   }
   initTheme();
+
+  window.addEventListener('popstate', () => {
+    const urlTheme = getThemeFromURL();
+    if (urlTheme && urlTheme !== currentTheme) applyTheme(urlTheme);
+  });
 
   function mulberry32(seed) {
     return function () {
@@ -199,7 +235,7 @@
     ctx2d.stroke();
   }
 
-  function drawPastoral(t) {
+  function drawDesert(t) {
     if (!ctx2d) return;
     const w = canvas.width, h = canvas.height;
     ctx2d.clearRect(0, 0, w, h);
@@ -274,8 +310,9 @@
     }
   }
 
+  // todo: fix :sob:
   function drawAmbient(t){
-    if (currentTheme === 'pastoral') drawPastoral(t);
+    if (currentTheme === 'desert') drawDesert(t);
     else drawImpact(t);
   }
 
