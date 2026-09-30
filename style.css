@@ -243,7 +243,7 @@ body[data-theme="desert"] .tag{
   padding: clamp(4.5rem, 9vw, 7rem) clamp(1.25rem, 5vw, 3rem);
 }
 
-#about, #domains, #links, #contact{
+#about, #domains, #links, #contact, #sites{
   scroll-margin-top: var(--nav-h);
 }
 
