@@ -1,145 +1,84 @@
 (() => {
-  const THEME_ALIASES = { impact: 'cocoa', desert: 'cream' };
-  const VALID_THEMES = new Set(['cocoa', 'cream']);
-  let currentTheme = 'cocoa';
+  const $ = s => document.querySelector(s);
 
-  function normalizeTheme(raw){
-    if (!raw) return null;
-    const n = raw.trim().toLowerCase();
-    const aliased = THEME_ALIASES[n] || n;
-    return VALID_THEMES.has(aliased) ? aliased : null;
+  document.querySelectorAll('.like').forEach(b => b.addEventListener('click', () => {
+    const on = b.getAttribute('aria-pressed') !== 'true', c = b.querySelector('.count');
+    b.setAttribute('aria-pressed', on);
+    c.textContent = +c.textContent + (on ? 1 : -1);
+  }));
+
+  const wrap = $('#stamps'), msg = $('#free'), N = 10;
+  for (let i = 0; i < N; i++) {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'stamp';
+    b.setAttribute('aria-pressed', 'false');
+    b.setAttribute('aria-label', 'Stamp ' + (i + 1));
+    b.innerHTML = '<i class="ic-heart"></i>';
+    wrap.appendChild(b);
   }
-
-  function getThemeFromURL(){
-    try{
-      const params = new URLSearchParams(window.location.search);
-      return normalizeTheme(params.get('theme'));
-    }catch(_){ return null; }
-  }
-
-  function getSystemTheme(){
-    try{
-      return window.matchMedia('(prefers-color-scheme: light)').matches ? 'cream' : 'cocoa';
-    }catch(_){ return 'cocoa'; }
-  }
-
-  function applyTheme(theme){
-    const normalized = normalizeTheme(theme) || getSystemTheme();
-    document.body.dataset.theme = normalized;
-    currentTheme = normalized;
-  }
-
-  function initTheme(){
-    const urlTheme = getThemeFromURL();
-    if (urlTheme){
-      applyTheme(urlTheme);
-    } else {
-      applyTheme(getSystemTheme());
-    }
-  }
-  initTheme();
-
-  try{
-    const mql = window.matchMedia('(prefers-color-scheme: light)');
-    const onSystemChange = () => {
-      if (!getThemeFromURL()) applyTheme(getSystemTheme());
-    };
-    if (mql.addEventListener) mql.addEventListener('change', onSystemChange);
-    else if (mql.addListener) mql.addListener(onSystemChange);
-  }catch(_){}
-
-  window.addEventListener('popstate', () => {
-    const urlTheme = getThemeFromURL();
-    if (urlTheme){
-      if (urlTheme !== currentTheme) applyTheme(urlTheme);
-    } else {
-      const sys = getSystemTheme();
-      if (sys !== currentTheme) applyTheme(sys);
-    }
+  const update = () => {
+    const n = wrap.querySelectorAll('.on').length;
+    msg.textContent = n === 0 ? 'tap a circle to stamp it!'
+      : n < N ? n + ' / ' + N + ' stamps, keep going!'
+      : 'now wasn\'t that fun?';
+  };
+  wrap.addEventListener('click', e => {
+    const b = e.target.closest('.stamp');
+    if (!b) return;
+    const on = !b.classList.contains('on');
+    b.classList.toggle('on', on);
+    b.setAttribute('aria-pressed', on);
+    update();
   });
 
-  const revealTargets = document.querySelectorAll(
-    '.about__grid, .section-lede, .link-list'
-  );
-  revealTargets.forEach(el => el.classList.add('reveal'));
+  const clickBegin = new Audio('assets/sound/click_begin.mp3');
+  const clickEnd = new Audio('assets/sound/click_end.mp3');
+  const play = a => { a.currentTime = 0; a.play().catch(() => {}); };
+  const clickBtn = $('.btn');
 
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('is-visible');
-        io.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
-  revealTargets.forEach(el => io.observe(el));
+  if (clickBtn) {
+    const ORIGINAL_TEXT = clickBtn.textContent;
+    const FLASH_TEXT = 'You\'re such a good girl';
+    const HOLD_MS = 1500;
+    const FADE_MS = 300;
+    let timers = [];
 
-  // In-site audio: preview Signal (music.auraea.fyi) in an overlay iframe
-  // so playback stays on this page instead of navigating away.
-  const previewBtn = document.getElementById('previewSignal');
-  const listenOverlay = document.getElementById('listenOverlay');
-  const listenClose = document.getElementById('listenOverlayClose');
-  const listenFrame = document.getElementById('listenFrame');
-  const LISTEN_SRC = 'https://music.auraea.fyi';
+    const flash = () => {
+      timers.forEach(clearTimeout);
+      timers = [];
 
-  if (previewBtn && listenOverlay && listenClose && listenFrame) {
-    const openListen = () => {
-      listenFrame.src = LISTEN_SRC;
-      listenOverlay.hidden = false;
-      requestAnimationFrame(() => listenOverlay.classList.add('is-open'));
-      listenClose.focus();
-    };
-    const closeListen = () => {
-      listenOverlay.classList.remove('is-open');
-      setTimeout(() => {
-        listenOverlay.hidden = true;
-        listenFrame.src = 'about:blank';
-      }, 300);
-      previewBtn.focus();
+      clickBtn.style.transition = 'none';
+      clickBtn.style.opacity = '1';
+      clickBtn.textContent = FLASH_TEXT;
+      void clickBtn.offsetWidth;
+      clickBtn.style.transition = 'opacity ' + FADE_MS + 'ms ease';
+
+      timers.push(setTimeout(() => {
+        clickBtn.style.opacity = '0';
+        timers.push(setTimeout(() => {
+          clickBtn.textContent = ORIGINAL_TEXT;
+          clickBtn.style.opacity = '1';
+        }, FADE_MS));
+      }, HOLD_MS));
     };
 
-    previewBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      openListen();
+    let down = false;
+    clickBtn.addEventListener('pointerdown', e => {
+      if (e.button !== 0) return;
+      down = true;
+      play(clickBegin);
     });
-    listenClose.addEventListener('click', closeListen);
-    listenOverlay.addEventListener('click', (e) => {
-      if (e.target === listenOverlay) closeListen();
+
+    window.addEventListener('pointerup', () => {
+      if (!down) return;
+      down = false;
+      play(clickEnd);
+      flash();
     });
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && !listenOverlay.hidden) closeListen();
-    });
+    window.addEventListener('pointercancel', () => { down = false; });
   }
 
-  const yearEl = document.getElementById('year');
-  if (yearEl) yearEl.textContent = new Date().getFullYear();
-
-  const finePrint = document.getElementById('finePrint');
-  const finePrintText = document.getElementById('finePrintText');
-  if (finePrint && finePrintText) {
-    const originalMarkup = finePrintText.innerHTML;
-    let isFlashing = false;
-
-    const runFlagFlash = () => {
-      if (isFlashing) return;
-      isFlashing = true;
-      finePrint.classList.add('is-flashing');
-
-      setTimeout(() => {
-        finePrintText.innerHTML = originalMarkup;
-        finePrint.classList.remove('is-flashing');
-      }, 2100);
-
-      setTimeout(() => { isFlashing = false; }, 2600);
-    };
-
-    finePrint.addEventListener('click', (e) => {
-      if (e.target.closest('#copyrightMark')) runFlagFlash();
-    });
-    finePrint.addEventListener('keydown', (e) => {
-      if ((e.key === 'Enter' || e.key === ' ') && e.target.closest('#copyrightMark')) {
-        e.preventDefault();
-        runFlagFlash();
-      }
-    });
-  }
+  const y = $('#year');
+  if (y) y.textContent = new Date().getFullYear();
 })();

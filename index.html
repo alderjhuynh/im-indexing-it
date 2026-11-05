@@ -1,165 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>auraea.fyi</title>
-
+<meta name="description" content="I'm Alex, or Lexie! Pull up a seat. I like coding, writing, making music, Minecraft and Silksong.">
+<meta name="theme-color" content="#fffdfa">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
-<link rel="alternate icon" type="image/png" href="favicon.png">
-
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=Sniglet:wght@800&family=Patrick+Hand&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="cursors.css">
 </head>
 <body>
-
-<header class="nav" id="top">
-  <a class="nav__mark" href="#sites">auraea.fyi</a>
-  <nav class="nav__links" id="navLinks">
-    <a href="#sites" class="nav__link" data-section="sites">sites</a>
-    <a href="#about" class="nav__link" data-section="about">about</a>
-  </nav>
-</header>
+<!-- wobble filter for all of the boxes -->
+<svg width="0" height="0" aria-hidden="true" style="position:absolute"><filter id="rough" x="-8%" y="-30%" width="116%" height="160%"><feTurbulence type="fractalNoise" baseFrequency=".03" numOctaves="2" seed="7" result="a"/><feDisplacementMap in="SourceGraphic" in2="a" scale="6" xChannelSelector="R" yChannelSelector="G" result="b"/><feTurbulence type="fractalNoise" baseFrequency=".7" numOctaves="2" seed="3" result="c"/><feDisplacementMap in="b" in2="c" scale="2.5" xChannelSelector="R" yChannelSelector="G"/></filter></svg>
 
 <main>
 
-  <section class="domains" id="sites">
-    <div class="section-inner">
-      <p class="tag">auraea.fyi</p>
-      <h2 class="section-title">Everything</h2>
-      <p class="section-lede">This is every site on this webpage.</p>
-
-      <ul class="link-list">
-        <li>
-          <a href="https://atlas.auraea.fyi" target="_blank" rel="noopener">
-            <span class="idx">01</span><span class="link-name">Atlas</span>
-            <small>a field atlas of lands, tongues, peoples, and powers</small>
-          </a>
-        </li>
-        <li>
-          <a href="https://stories.auraea.fyi" target="_blank" rel="noopener">
-            <span class="idx">02</span><span class="link-name">Inkwell</span>
-            <small>stories, serials, and scraps of writing</small>
-          </a>
-        </li>
-        <li>
-          <a href="https://silence.auraea.fyi" target="_blank" rel="noopener">
-            <span class="idx">03</span><span class="link-name">Deafening Silence</span>
-            <small>page for my wip novel</small>
-          </a>
-        </li>
-        <li class="has-preview">
-          <a href="https://music.auraea.fyi" target="_blank" rel="noopener">
-            <span class="idx">04</span><span class="link-name">Signal</span>
-            <small>an audio-reactive listening space</small>
-          </a>
-          <button class="preview-btn" id="previewSignal" type="button" aria-label="Preview Signal here, without leaving the page" title="Preview inline">
-            <svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true" focusable="false" fill="currentColor"><path d="M8 5.14v14l11-7z"></path></svg>
-          </button>
-        </li>
-        <li>
-          <a href="https://athena.auraea.fyi" target="_blank" rel="noopener">
-            <span class="idx">05</span><span class="link-name">Athena</span>
-            <small>a galaxy view of worlds, factions, and timelines</small>
-          </a>
-        </li>
-        <li>
-          <a href="https://auramap-dat-viewer.auraea.fyi" target="_blank" rel="noopener">
-            <span class="idx">06</span><span class="link-name">AuraMap Viewer</span>
-            <small>a web based viewer for dat files from my map mod</small>
-          </a>
-        </li>
-        <li>
-          <a href="https://css.auraea.fyi" target="_blank" rel="noopener">
-            <span class="idx">07</span><span class="link-name">UI Kits</span>
-            <small>a shelf of hand-built web themes</small>
-          </a>
-        </li>
-        <li>
-          <a href="https://dictionary.auraea.fyi" target="_blank" rel="noopener">
-            <span class="idx">08</span><span class="link-name">Dictionary</span>
-            <small>a small english dictionary</small>
-          </a>
-        </li>
-        <li>
-          <a href="https://particles.auraea.fyi" target="_blank" rel="noopener">
-            <span class="idx">09</span><span class="link-name">Particle Rings</span>
-            <small>a minecraft particle-ring generator</small>
-          </a>
-        </li>
-        <li>
-          <a href="https://shame.auraea.fyi" target="_blank" rel="noopener">
-            <span class="idx">10</span><span class="link-name">Shame</span>
-            <small>an interactive poem</small>
-          </a>
-        </li>
-        <li>
-          <a href="https://wiki.auraea.fyi" target="_blank" rel="noopener">
-            <span class="idx">11</span><span class="link-name">AuraSMP Wiki</span>
-            <small>notes on the server, its gear, and its world</small>
-          </a>
-        </li>
-        <li>
-          <a href="https://learn.html.auraea.fyi" target="_blank" rel="noopener">
-            <span class="idx">12</span><span class="link-name">Learn HTML</span>
-            <small>a from-scratch html + css course</small>
-          </a>
-        </li>
-        <li>
-          <a href="https://paint.auraea.fyi" target="_blank" rel="noopener">
-            <span class="idx">13</span><span class="link-name">Painting</span>
-            <small>a small ink-painting site with realisitic physics.</small>
-          </a>
-        </li>
-      </ul>
-    </div>
-  </section>
-
-  <section class="about" id="about">
-    <div class="section-inner">
-      <p class="tag">about</p>
-      <h2 class="section-title">who's this?</h2>
-      <div class="about__grid">
-        <ul class="facts">
-          <li><span class="facts__key">pronouns</span><span class="facts__val">she/it</span></li>
-          <li><span class="facts__key">location</span><span class="facts__val">US</span></li>
-          <li><span class="facts__key">doing</span><span class="facts__val">music, code, worldbuilding</span></li>
-          <li><span class="facts__key">status</span><span class="facts__val">probably awake</span></li>
-        </ul>
-        <div class="about__copy">
-          <p>intro</p>
-          <p>Hihi, I'm Alex, or Lexie, whichever is easiest to remember. I play Minecraft and Silksong, and like coding, writing, and making music. I also love my girlfriend!! I imagine you came here from discord, so feel free to talk to me there about anything!</p>
-        </div>
+  <header class="panel sign">
+    <div>
+      <h1>Hihi, I'm Alex!<small>(or Lexie, whichever is easiest to remember)</small></h1>
+      <p class="lede">This is just my little corner of the internet! Stay as long as you like :)</p>
+      <div class="row">
+        <a class="btn">Click Me!</a>
       </div>
     </div>
+    <svg class="cup" viewBox="0 0 200 190" role="img" aria-label="this is definitely not an ai generated svg">
+      <g class="steam"><path d="M72 40q-12-14 0-26t0-24"/><path d="M104 44q-12-14 0-26t0-24"/><path d="M136 40q-12-14 0-26t0-24"/></g>
+      <path d="M40 66h120v50q0 40-40 40h-40q-40 0-40-40z"/>
+      <path d="M160 82h14q18 0 18 20t-18 20h-18"/>
+      <path d="M14 172h172"/>
+      <path class="fillh" d="M100 128c-18-12-22-19-22-26 0-6 4-9 9-9 5 0 11 3 13 9 2-6 8-9 13-9 5 0 9 3 9 9 0 7-4 14-22 26z" transform="translate(0 -4)"/>
+    </svg>
+  </header>
+
+  <section class="panel menu" aria-labelledby="menuTitle">
+    <div class="title">
+      <h2 id="menuTitle">Today's Menu</h2>
+      <p>a little taste of what I'm up to</p>
+    </div>
+    <div class="squig" aria-hidden="true"></div>
+    <div class="cols">
+      <div>
+        <h3>Hobbies on tap</h3>
+        <div class="item"><b>Coding</b><span class="dots"></span><em>most days</em></div>
+        <div class="item"><b>Writing</b><span class="dots"></span><em>stories &amp; serials</em></div>
+        <div class="item"><b>Making music</b><span class="dots"></span><em>always</em></div>
+        <div class="item"><b>Worldbuilding</b><span class="dots"></span><em>bottomless</em></div>
+      </div>
+      <div>
+        <h3>Games on the side</h3>
+        <div class="item"><b><span class="ph">Minecraft</b><span class="dots"></span><em></span class="ph">obviously</em></div>
+        <div class="item"><b>Silksong</b><span class="dots"></span><em>no spoilers!</em></div>
+        <div class="item"><b>Terraria</span></b><span class="dots"></span><em>play with me!</em></div>
+        <h3>The house special</h3>
+        <div class="item"><b>My girlfriend</b><span class="dots"></span><em>I love her!!</em></div>
+      </div>
+    </div>
+    <div class="squig" aria-hidden="true"></div>
   </section>
 
-  <footer class="contact" id="contact">
-    <div class="section-inner">
-      <p class="fine-print" id="finePrint"><span class="fine-print__text" id="finePrintText"><span class="copyright-mark" id="copyrightMark" role="button" tabindex="0">&copy;</span> <span id="year"></span> auraea.fyi</span></p>
-    </div>
+  <div class="trio">
+
+    <section class="panel hours" aria-labelledby="hoursTitle">
+      <h2 id="hoursTitle">About me!</h2>
+      <dl>
+        <div class="row2"><dt>Pronouns</dt><dd>she/it</dd></div>
+        <div class="row2"><dt>Location</dt><dd>US</dd></div>
+        <div class="row2"><dt>Doing</dt><dd>music, code, worldbuilding</dd></div>
+        <div class="row2"><dt>Status</dt><dd>probably awake</dd></div>
+      </dl>
+    </section>
+
+    <section class="panel note-card">
+      <span class="tape" aria-hidden="true"></span>
+      <h2>A note from the barista</h2>
+      <p class="hand">I imagine you came here from Discord, so feel free to talk to me there about anything!</span></p>
+      <p class="hand">Love yall!!!!</p>
+    </section>
+
+    <section class="panel loyalty" aria-labelledby="loyTitle">
+      <h2 id="loyTitle">Stamp card</h2>
+      <div class="stamps" id="stamps"></div>
+      <p class="free" id="free">tap a circle to stamp it!</p>
+    </section>
+
+  </div>
+
+  <footer>
+    <div class="squig" aria-hidden="true"></div>
+    <span>&copy; <span id="year">2026</span> auraea.fyi</span>
   </footer>
 
 </main>
-
-<div class="listen-overlay" id="listenOverlay" role="dialog" aria-modal="true" aria-labelledby="listenOverlayTitle" hidden>
-  <div class="listen-overlay__card">
-    <div class="listen-overlay__head">
-      <p class="listen-overlay__title" id="listenOverlayTitle">signal / select</p>
-      <div class="listen-overlay__actions">
-        <a class="listen-overlay__external" href="https://music.auraea.fyi" target="_blank" rel="noopener">open in new tab</a>
-        <button class="listen-overlay__close" id="listenOverlayClose" type="button" aria-label="Close">&times;</button>
-      </div>
-    </div>
-    <div class="listen-overlay__frame-wrap">
-      <iframe id="listenFrame" title="auraea music visualizer" loading="lazy" allow="autoplay" src="about:blank"></iframe>
-    </div>
-  </div>
-</div>
-
 <script src="script.js"></script>
 </body>
 </html>
