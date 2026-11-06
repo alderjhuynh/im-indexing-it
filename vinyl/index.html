@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Vinyl - auraea.fyi</title>
+<meta name="description" content="A little turntable. Grab the record and spin it to scrub through the song.">
+<meta name="theme-color" content="#fffdfa">
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sniglet:wght@800&family=Patrick+Hand&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="../cursors.css">
+<link rel="stylesheet" href="vinyl.css">
+</head>
+<body>
+<svg width="0" height="0" aria-hidden="true" style="position:absolute"><filter id="rough" x="-8%" y="-30%" width="116%" height="160%"><feTurbulence type="fractalNoise" baseFrequency=".03" numOctaves="2" seed="7" result="a"/><feDisplacementMap in="SourceGraphic" in2="a" scale="6" xChannelSelector="R" yChannelSelector="G" result="b"/><feTurbulence type="fractalNoise" baseFrequency=".7" numOctaves="2" seed="3" result="c"/><feDisplacementMap in="b" in2="c" scale="2.5" xChannelSelector="R" yChannelSelector="G"/></filter></svg>
+
+<main>
+
+  <section class="panel deck" aria-labelledby="deckTitle">
+    <div class="deck-head">
+      <div>
+        <h1 id="deckTitle">Put a record on</h1>
+      </div>
+      <a class="btn alt sm" href="../">home</a>
+    </div>
+
+    <svg class="stage" id="stage" viewBox="0 0 560 420" role="group" aria-label="A turntable with a vinyl record and a tonearm">
+      <defs>
+        <radialGradient id="sheen" cx="210" cy="210" r="190" gradientUnits="userSpaceOnUse">
+          <stop offset="0.15" stop-color="#fff" stop-opacity="0"/>
+          <stop offset="0.7" stop-color="#fff" stop-opacity=".16"/>
+          <stop offset="1" stop-color="#fff" stop-opacity=".04"/>
+        </radialGradient>
+        <clipPath id="discClip"><circle cx="210" cy="210" r="188"/></clipPath>
+        <path id="labelRing" d="M210 210m-45 0a45 45 0 1 1 90 0a45 45 0 1 1-90 0"/>
+      </defs>
+
+      <g class="rough">
+        <circle class="platter" cx="210" cy="210" r="202"/>
+      </g>
+
+      <g id="rec">
+        <circle class="disc" cx="210" cy="210" r="190"/>
+        <g id="grooves"></g>
+        <circle class="label" cx="210" cy="210" r="66"/>
+        <circle class="label-ring" cx="210" cy="210" r="58"/>
+        <text class="label-text"><textPath href="#labelRing" startOffset="55" textLength="0" lengthAdjust="spacing">side a</textPath></text>
+                <text class="label-text"><textPath href="#labelRing" startOffset="185" textLength="0" lengthAdjust="spacing">auraea.fyi</textPath></text>
+        <path class="label-heart" fill-rule="evenodd" d="M22 38C6 26 1 18 1 11 1 5 6 1 11 1c5 0 9 3 11 7 2-4 6-7 11-7 5 0 10 4 10 10 0 7-5 15-21 27zM29.5 19.5a7.5 7.5 0 1 1-15 0a7.5 7.5 0 1 1 15 0z" transform="translate(192.4 194.4) scale(.8)"/>
+        <circle class="spindle" cx="210" cy="210" r="5.5"/>
+      </g>
+
+      <g clip-path="url(#discClip)" pointer-events="none"><g id="sheens"></g></g>
+
+      <circle id="hit" class="grab" cx="210" cy="210" r="190" fill="transparent"
+              tabindex="0" role="slider" aria-label="Record position. Drag to scrub, or use the arrow keys."
+              aria-valuemin="0" aria-valuemax="0" aria-valuenow="0" aria-valuetext="0:00"/>
+
+      <g id="arm" pointer-events="none">
+        <circle class="arm-base" cx="500" cy="70" r="26"/>
+        <g id="armPivot">
+          <line class="arm-weight" x1="-34" y1="0" x2="-8" y2="0"/>
+          <line class="arm-rod" x1="0" y1="0" x2="268" y2="0"/>
+          <rect class="arm-head" x="258" y="-8" width="38" height="16" rx="6"/>
+          <circle class="arm-hub" cx="0" cy="0" r="9"/>
+        </g>
+      </g>
+    </svg>
+
+    <p class="hint" id="status" aria-live="polite">hold on, give it just a moment...</p>
+
+    <div class="controls">
+      <button class="btn sm" id="play" type="button" disabled>Play</button>
+      <span class="time" id="time" aria-hidden="true">0:00 / 0:00</span>
+      <input id="seek" type="range" min="0" max="1000" value="0" step="1" aria-label="Seek" disabled>
+    </div>
+  </section>
+
+  <footer>
+    <div class="squig" aria-hidden="true"></div>
+    <span>&copy; <span id="year">2026</span> auraea.fyi</span>
+  </footer>
+
+</main>
+<script src="vinyl.js"></script>
+</body>
+</html>

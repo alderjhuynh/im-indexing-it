@@ -1,0 +1,212 @@
+:root {
+   --disc: #4a322e;
+   --groove: #d3ada4;
+   --label: var(--wash);
+}
+
+@media (prefers-color-scheme: dark) {
+   :root:not([data-theme="light"]) {
+      --disc: #150f0e;
+      --label: #4a3836;
+   }
+}
+
+:root[data-theme="dark"] {
+   --disc: #150f0e;
+   --label: #4a3836;
+}
+
+.deck {
+   padding: clamp(22px, 4vw, 36px);
+   gap: 12px;
+}
+
+.deck-head {
+   display: flex;
+   justify-content: space-between;
+   align-items: flex-start;
+   gap: 16px;
+   flex-wrap: wrap;
+}
+
+.deck-head h1 {
+   font-size: clamp(1.8rem, 5vw, 2.6rem);
+}
+
+.deck-head p {
+   margin: 6px 0 0;
+   max-width: 30em;
+}
+
+.deck-head .btn {
+   flex: none;
+   text-decoration: none;
+   display: inline-flex;
+   align-items: center;
+   justify-content: center;
+}
+
+.stage {
+   width: 100%;
+   max-width: 760px;
+   height: auto;
+   margin: 0 auto;
+   display: block;
+   overflow: visible;
+   user-select: none;
+   -webkit-user-select: none;
+   -webkit-tap-highlight-color: transparent;
+}
+
+.platter {
+   fill: var(--wash);
+   stroke: var(--ink);
+   stroke-width: 3;
+}
+
+.rough {
+   filter: url(#rough);
+}
+
+.disc {
+   fill: var(--disc);
+   stroke: var(--ink);
+   stroke-width: 4;
+}
+
+#grooves circle {
+   fill: none;
+   stroke: var(--groove);
+   stroke-width: 1;
+   opacity: .16;
+}
+
+#grooves circle.gap {
+   opacity: .38;
+   stroke-width: 2;
+}
+
+#grooves path {
+   fill: none;
+   stroke: var(--groove);
+   stroke-linecap: round;
+   stroke-width: 1.6;
+   opacity: .5;
+}
+
+.label {
+   fill: var(--label);
+}
+
+.label-ring {
+   fill: none;
+   stroke: var(--ink);
+   stroke-width: 2;
+   stroke-dasharray: 3 6;
+   stroke-linecap: round;
+   opacity: .7;
+}
+
+.label-text {
+   font: 400 10.5px "Patrick Hand", system-ui, sans-serif;
+   letter-spacing: .08em;
+   fill: var(--ink-dp);
+   text-transform: uppercase;
+   cursor: inherit;
+}
+
+.label-heart {
+   fill: var(--ink);
+}
+
+.spindle {
+   fill: var(--paper);
+   stroke: var(--ink);
+   stroke-width: 2;
+}
+
+#hit {
+   touch-action: none;
+   outline: none;
+}
+
+#hit:focus-visible {
+   outline: none;
+   stroke: var(--paper);
+   stroke-width: 5;
+   stroke-dasharray: 3 11;
+   stroke-linecap: round;
+}
+
+#sheens {
+   filter: blur(7px);
+}
+
+html.is-grabbing #hit {
+   cursor: var(--cursor-grabbing);
+}
+
+.arm-base {
+   fill: var(--paper);
+   stroke: var(--ink);
+   stroke-width: 4;
+}
+
+.arm-rod,
+.arm-weight {
+   stroke: var(--ink);
+   stroke-width: 6;
+   stroke-linecap: round;
+}
+
+.arm-weight {
+   stroke-width: 12;
+}
+
+.arm-head {
+   fill: var(--paper);
+   stroke: var(--ink);
+   stroke-width: 4;
+}
+
+.arm-hub {
+   fill: var(--ink);
+}
+
+.hint {
+   margin: 0;
+   text-align: center;
+   min-height: 1.6em;
+}
+
+.controls {
+   display: flex;
+   align-items: center;
+   gap: 16px;
+   flex-wrap: wrap;
+}
+
+.controls .btn {
+   min-width: 112px;
+}
+
+.time {
+   font-variant-numeric: tabular-nums;
+   white-space: nowrap;
+}
+
+#seek {
+   flex: 1;
+   min-width: 160px;
+}
+
+@media (max-width: 520px) {
+   .controls {
+      justify-content: space-between;
+   }
+
+   #seek {
+      flex-basis: 100%;
+      order: 3;
+   }
+}
