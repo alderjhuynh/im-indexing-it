@@ -131,11 +131,13 @@
 
       const res = await fetch(SONG_URL);
       if (!res.ok) throw new Error('song ' + res.status);
-      const buf = await ctx.decodeAudioData(await res.arrayBuffer());
+      let buf = await ctx.decodeAudioData(await res.arrayBuffer());
       duration = buf.duration;
 
       const L = buf.getChannelData(0).slice();
       const R = buf.numberOfChannels > 1 ? buf.getChannelData(1).slice() : null;
+
+      buf = null;
 
       node = new AudioWorkletNode(ctx, 'vinyl-processor', { numberOfInputs: 0, outputChannelCount: [2] });
       node.connect(ctx.destination);
@@ -163,8 +165,9 @@
   }
 
   let prevA = 0;
+  let hitRect = null;
   const pointerAngle = (e) => {
-    const b = hit.getBoundingClientRect();
+    const b = hitRect || (hitRect = hit.getBoundingClientRect());
     const dx = e.clientX - (b.left + b.width / 2);
     const dy = e.clientY - (b.top + b.height / 2);
     return { a: Math.atan2(dy, dx) * 180 / Math.PI, r: Math.hypot(dx, dy), R: b.width / 2 };
@@ -176,7 +179,8 @@
     hit.setPointerCapture(e.pointerId);
     ensureRunning();
 
-    dragPos = pos(); 
+    hitRect = null;
+    dragPos = pos();
     dragging = true;
     started = true;
     prevA = pointerAngle(e).a;
@@ -243,14 +247,14 @@
     const t = pos();
 
     const deg = (t * DEG_PER_SEC) % 360;
-    rec.setAttribute('transform', `rotate(${deg.toFixed(2)} ${CX} ${CY})`);
+    rec.style.transform = `rotate(${deg.toFixed(2)}deg)`;
 
     const progress = duration ? t / duration : 0;
     const target = started && !ended
       ? armAngleFor(R_OUTER - (R_OUTER - R_INNER) * progress)
       : ARM_REST;
     armAngle += (target - armAngle) * (1 - Math.exp(-dt / 0.14));
-    armPivot.setAttribute('transform', `translate(${PIVOT.x} ${PIVOT.y}) rotate(${armAngle.toFixed(2)})`);
+    armPivot.style.transform = `rotate(${armAngle.toFixed(2)}deg)`;
 
     const sec = Math.floor(t);
     if (sec !== lastSecond) {

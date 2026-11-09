@@ -32,9 +32,33 @@
     update();
   });
 
-  const clickBegin = new Audio('assets/sound/click_begin.mp3');
-  const clickEnd = new Audio('assets/sound/click_end.mp3');
-  const play = a => { a.currentTime = 0; a.play().catch(() => {}); };
+  const sfx = (() => {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return { play() {}, unlock() {} };
+    const ctx = new AC({ latencyHint: 'interactive' });
+    const bufs = {};
+    const load = (k, url) => fetch(url)
+      .then(r => r.arrayBuffer())
+      .then(ab => new Promise((ok, no) => ctx.decodeAudioData(ab, ok, no)))
+      .then(b => { bufs[k] = b; })
+      .catch(() => {});
+    load('begin', 'assets/sound/click_begin.mp3');
+    load('end', 'assets/sound/click_end.mp3');
+    const unlock = () => { if (ctx.state !== 'running') ctx.resume().catch(() => {}); };
+    window.addEventListener('pointerdown', unlock, { passive: true });
+    return {
+      unlock,
+      play(k) {
+        if (!bufs[k]) return;
+        unlock();
+        const s = ctx.createBufferSource();
+        s.buffer = bufs[k];
+        s.connect(ctx.destination);
+        s.start();
+      },
+    };
+  })();
+  const play = k => sfx.play(k);
   const clickBtn = $('.btn');
 
   if (clickBtn) {
@@ -67,13 +91,13 @@
     clickBtn.addEventListener('pointerdown', e => {
       if (e.button !== 0) return;
       down = true;
-      play(clickBegin);
+      play('begin');
     });
 
     window.addEventListener('pointerup', () => {
       if (!down) return;
       down = false;
-      play(clickEnd);
+      play('end');
       flash();
     });
     window.addEventListener('pointercancel', () => { down = false; });

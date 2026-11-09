@@ -27,48 +27,53 @@
       <a class="btn alt sm" href="../">home</a>
     </div>
 
-    <svg class="stage" id="stage" viewBox="0 0 560 420" role="group" aria-label="A turntable with a vinyl record and a tonearm">
-      <defs>
-        <radialGradient id="sheen" cx="210" cy="210" r="190" gradientUnits="userSpaceOnUse">
-          <stop offset="0.15" stop-color="#fff" stop-opacity="0"/>
-          <stop offset="0.7" stop-color="#fff" stop-opacity=".16"/>
-          <stop offset="1" stop-color="#fff" stop-opacity=".04"/>
-        </radialGradient>
-        <clipPath id="discClip"><circle cx="210" cy="210" r="188"/></clipPath>
-        <path id="labelRing" d="M210 210m-45 0a45 45 0 1 1 90 0a45 45 0 1 1-90 0"/>
-      </defs>
+    <div class="stage" id="stage" role="group" aria-label="A turntable with a vinyl record and a tonearm">
+      <svg class="layer" viewBox="0 0 560 420" aria-hidden="true">
+        <defs>
+          <radialGradient id="sheen" cx="210" cy="210" r="190" gradientUnits="userSpaceOnUse">
+            <stop offset="0.15" stop-color="#fff" stop-opacity="0"/>
+            <stop offset="0.7" stop-color="#fff" stop-opacity=".16"/>
+            <stop offset="1" stop-color="#fff" stop-opacity=".04"/>
+          </radialGradient>
+          <clipPath id="discClip"><circle cx="210" cy="210" r="188"/></clipPath>
+          <path id="labelRing" d="M210 210m-45 0a45 45 0 1 1 90 0a45 45 0 1 1-90 0"/>
+        </defs>
+        <g class="rough">
+          <circle class="platter" cx="210" cy="210" r="202"/>
+        </g>
+      </svg>
 
-      <g class="rough">
-        <circle class="platter" cx="210" cy="210" r="202"/>
-      </g>
-
-      <g id="rec">
+      <svg class="layer spinner" id="rec" viewBox="0 0 560 420" aria-hidden="true">
         <circle class="disc" cx="210" cy="210" r="190"/>
         <g id="grooves"></g>
         <circle class="label" cx="210" cy="210" r="66"/>
         <circle class="label-ring" cx="210" cy="210" r="58"/>
         <text class="label-text"><textPath href="#labelRing" startOffset="55" textLength="0" lengthAdjust="spacing">side a</textPath></text>
-                <text class="label-text"><textPath href="#labelRing" startOffset="185" textLength="0" lengthAdjust="spacing">auraea.fyi</textPath></text>
+        <text class="label-text"><textPath href="#labelRing" startOffset="185" textLength="0" lengthAdjust="spacing">auraea.fyi</textPath></text>
         <path class="label-heart" fill-rule="evenodd" d="M22 38C6 26 1 18 1 11 1 5 6 1 11 1c5 0 9 3 11 7 2-4 6-7 11-7 5 0 10 4 10 10 0 7-5 15-21 27zM29.5 19.5a7.5 7.5 0 1 1-15 0a7.5 7.5 0 1 1 15 0z" transform="translate(192.4 194.4) scale(.8)"/>
         <circle class="spindle" cx="210" cy="210" r="5.5"/>
-      </g>
+      </svg>
 
-      <g clip-path="url(#discClip)" pointer-events="none"><g id="sheens"></g></g>
-
-      <circle id="hit" class="grab" cx="210" cy="210" r="190" fill="transparent"
-              tabindex="0" role="slider" aria-label="Record position. Drag to scrub, or use the arrow keys."
-              aria-valuemin="0" aria-valuemax="0" aria-valuenow="0" aria-valuetext="0:00"/>
-
-      <g id="arm" pointer-events="none">
+      <svg class="layer" viewBox="0 0 560 420" aria-hidden="true">
+        <g clip-path="url(#discClip)"><g id="sheens"></g></g>
         <circle class="arm-base" cx="500" cy="70" r="26"/>
-        <g id="armPivot">
+      </svg>
+
+      <svg class="layer arm" id="armPivot" viewBox="0 0 560 420" aria-hidden="true">
+        <g transform="translate(500 70)">
           <line class="arm-weight" x1="-34" y1="0" x2="-8" y2="0"/>
           <line class="arm-rod" x1="0" y1="0" x2="268" y2="0"/>
           <rect class="arm-head" x="258" y="-8" width="38" height="16" rx="6"/>
           <circle class="arm-hub" cx="0" cy="0" r="9"/>
         </g>
-      </g>
-    </svg>
+      </svg>
+
+      <svg class="layer hit-layer" viewBox="0 0 560 420">
+        <circle id="hit" class="grab" cx="210" cy="210" r="190" fill="transparent"
+                tabindex="0" role="slider" aria-label="Record position. Drag to scrub, or use the arrow keys."
+                aria-valuemin="0" aria-valuemax="0" aria-valuenow="0" aria-valuetext="0:00"/>
+      </svg>
+    </div>
 
     <p class="hint" id="status" aria-live="polite">hold on, give it just a moment...</p>
 

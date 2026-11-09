@@ -129,6 +129,7 @@ p {
    filter: url(#rough);
    pointer-events: none;
    transition: transform .1s;
+   will-change: transform;
 }
 
 .panel {
@@ -156,6 +157,7 @@ p {
    border: 0;
    padding: 16px 32px;
    transition: transform .1s;
+   touch-action: manipulation;
 }
 
 .btn.alt {
@@ -181,8 +183,10 @@ p {
    place-items: center;
 }
 
-.btn:hover:not(:disabled)::before {
-   transform: rotate(-.8deg) scale(1.02);
+@media (hover: hover) {
+   .btn:hover:not(:disabled)::before {
+      transform: rotate(-.8deg) scale(1.02);
+   }
 }
 
 .btn:active:not(:disabled) {
@@ -544,8 +548,22 @@ html {
    stroke-linejoin: round;
 }
 
-.cup {
+.cup-wrap {
+   display: grid;
+   width: 100%;
+}
+
+.cup-wrap > .cup {
+   grid-area: 1 / 1;
+}
+
+.cup.art {
    filter: url(#rough);
+   will-change: transform;
+}
+
+.cup.steam-layer {
+   pointer-events: none;
 }
 
 .cup .fillh {
@@ -577,7 +595,7 @@ html {
       grid-template-columns: 1fr;
    }
 
-   .cup {
+   .cup-wrap {
       max-width: 190px;
       order: -1;
       margin: 0 auto;
@@ -759,6 +777,7 @@ html {
    background: color-mix(in srgb, var(--ink) 28%, transparent);
    border-radius: 4px;
    filter: url(#rough);
+   will-change: transform;
 }
 
 .note-card p {
@@ -782,6 +801,7 @@ html {
 
 .stamp {
    all: unset;
+   touch-action: manipulation;
    box-sizing: border-box;
    aspect-ratio: 1;
    display: grid;
@@ -809,8 +829,10 @@ html {
    transform: scale(1) rotate(-6deg);
 }
 
-.stamp:hover {
-   transform: scale(1.08);
+@media (hover: hover) {
+   .stamp:hover {
+      transform: scale(1.08);
+   }
 }
 
 .stamp:focus-visible {
