@@ -1,17 +1,18 @@
 {
   "domain": "auraea.fyi",
   "subdomains": [
-    { "subdomain": "atlas",     "name": "Atlas",      "description": "worldbuilding and conlanging" },
-    { "subdomain": "athena",     "name": "Athena",      "description": "an example that showcases my space-themed worldbuilding site" },
-    { "subdomain": "shame",     "name": "Shame",      "description": "a cool poem" },
-    { "subdomain": "stories",     "name": "Stories",      "description": "stories set in my worldbuilt world" },
-    { "subdomain": "css",     "name": "UI Kits",      "description": "a bunch of examples of my frontend dev work" },
-    { "subdomain": "atlas",     "name": "Atlas",      "description": "worldbuilding and conlanging" },
-    { "subdomain": "learn.html",     "name": "Learn HTML",      "description": "a site that teaches you how to write them yourself" },
-    { "subdomain": "dictionary",     "name": "Dictionary",      "description": "a really simple dictionary so I can practice SQL" },
-    { "subdomain": "cube",     "name": "Rubik's Cube",      "description": "super simple three.js sim of a 3x3 rubik's cube" },
-    { "subdomain": "music",     "name": "HEAR ME AND WEEP",      "description": "a visualizer for a music album I produced" },
-    { "subdomain": "silence",     "name": "Deafening Silence",      "description": "a place for me to put a book I'm working on" },
-    { "subdomain": "music",     "name": "HEAR ME AND WEEP",      "description": "a visualizer for a music album I produced" }
+    { "subdomain": "atlas",             "name": "Atlas",                "description": "worldbuilding and conlanging" },
+    { "subdomain": "athena",            "name": "Athena",               "description": "an example that showcases my space-themed worldbuilding site" },
+    { "subdomain": "shame",             "name": "Shame",                "description": "a cool poem" },
+    { "subdomain": "stories",           "name": "Stories",              "description": "stories set in my worldbuilt world" },
+    { "subdomain": "css",               "name": "UI Kits",              "description": "a bunch of examples of my frontend dev work" },
+    { "subdomain": "atlas",             "name": "Atlas",                "description": "worldbuilding and conlanging" },
+    { "subdomain": "learn.html",        "name": "Learn HTML",           "description": "a site that teaches you how to write them yourself" },
+    { "subdomain": "dictionary",        "name": "Dictionary",           "description": "a really simple dictionary so I can practice SQL" },
+    { "subdomain": "cube",              "name": "Rubik's Cube",         "description": "super simple three.js sim of a 3x3 rubik's cube" },
+    { "subdomain": "music",             "name": "HEAR ME AND WEEP",     "description": "a visualizer for a music album I produced" },
+    { "subdomain": "silence",           "name": "Deafening Silence",    "description": "a place for me to put a book I'm working on" },
+    { "subdomain": "music",             "name": "HEAR ME AND WEEP",     "description": "a visualizer for a music album I produced" },
+    { "subdomain": "docs",              "name": "Docs",                 "description": "a clone of google docs that doesn't steal your data or your ip" }
   ]
 }
