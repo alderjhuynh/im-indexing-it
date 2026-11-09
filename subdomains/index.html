@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Subdomains - auraea.fyi</title>
+<meta name="description" content="Too many little corners to list. Spin the wheel and see where it lands.">
+<meta name="theme-color" content="#fffdfa">
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sniglet:wght@800&family=Patrick+Hand&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="../cursors.css">
+<link rel="stylesheet" href="subdomains.css">
+</head>
+<body>
+<svg width="0" height="0" aria-hidden="true" style="position:absolute"><filter id="rough" x="-8%" y="-30%" width="116%" height="160%"><feTurbulence type="fractalNoise" baseFrequency=".03" numOctaves="2" seed="7" result="a"/><feDisplacementMap in="SourceGraphic" in2="a" scale="6" xChannelSelector="R" yChannelSelector="G" result="b"/><feTurbulence type="fractalNoise" baseFrequency=".7" numOctaves="2" seed="3" result="c"/><feDisplacementMap in="b" in2="c" scale="2.5" xChannelSelector="R" yChannelSelector="G"/></filter></svg>
+
+<main>
+
+  <section class="panel picker" aria-labelledby="pickTitle">
+    <div class="picker-head">
+      <h1 id="pickTitle">Pick a Subdomain</h1>
+      <a class="btn alt sm" href="../">home</a>
+    </div>
+
+    <div class="drum">
+      <div class="lens" aria-hidden="true">
+        <i class="ic-heart peg l"></i>
+        <i class="ic-heart peg r"></i>
+      </div>
+      <div class="wheel grab" id="wheel" tabindex="0" role="group"
+           aria-roledescription="spinner"
+           aria-label="Subdomains. Use the arrow keys to spin, type a letter to jump, and press Enter to open the one in the middle."></div>
+    </div>
+
+    <p class="hint" id="status" aria-live="polite">loading the menu...</p>
+
+    <div class="controls">
+      <button class="btn sm" id="spin" type="button" disabled>Spin!</button>
+      <label class="switch">
+        <span>click sounds</span>
+        <input id="sound" type="checkbox" checked>
+      </label>
+    </div>
+
+    <details class="acc">
+      <summary>just show me a plain list</summary>
+      <div><ul class="plain" id="plain"></ul></div>
+    </details>
+  </section>
+
+  <footer>
+    <div class="squig" aria-hidden="true"></div>
+    <span>&copy; <span id="year">2026</span> auraea.fyi</span>
+  </footer>
+
+</main>
+<script src="subdomains.js"></script>
+</body>
+</html>
