@@ -1,0 +1,227 @@
+:root {
+   --disc: #4a322e;
+   --groove: #d3ada4;
+   --label: var(--wash);
+}
+
+@media (prefers-color-scheme: dark) {
+   :root:not([data-theme="light"]) {
+      --disc: #150f0e;
+      --label: #4a3836;
+   }
+}
+
+:root[data-theme="dark"] {
+   --disc: #150f0e;
+   --label: #4a3836;
+}
+
+main:focus {
+   outline: none;
+}
+
+.mp {
+   --w: 344px;
+}
+
+.mp-body {
+   display: flex;
+   align-items: center;
+   gap: 8px;
+}
+
+.mp-rec {
+   flex: none;
+   width: 92px;
+   touch-action: none;
+   -webkit-user-select: none;
+   user-select: none;
+   -webkit-tap-highlight-color: transparent;
+}
+
+.mp-rec svg {
+   display: block;
+   width: 100%;
+   height: auto;
+   overflow: visible;
+   pointer-events: none;
+}
+
+.mp-hit {
+   pointer-events: all;
+   touch-action: none;
+   outline: none;
+}
+
+.mp-hit:focus-visible {
+   stroke: var(--paper);
+   stroke-width: 14;
+   stroke-dasharray: 8 30;
+   stroke-linecap: round;
+}
+
+.mp-disc {
+   fill: var(--disc);
+   stroke: var(--ink);
+   stroke-width: 12;
+}
+
+.mp-grooves circle {
+   fill: none;
+   stroke: var(--groove);
+   stroke-width: 3;
+   opacity: .24;
+}
+
+.mp-grooves circle.gap {
+   stroke-width: 5;
+   opacity: .42;
+}
+
+.mp-grooves path {
+   fill: none;
+   stroke: var(--groove);
+   stroke-linecap: round;
+   stroke-width: 5;
+   opacity: .5;
+}
+
+.mp-label {
+   fill: var(--label);
+}
+
+.mp-ring {
+   fill: none;
+   stroke: var(--ink);
+   stroke-width: 7;
+   stroke-dasharray: 10 22;
+   stroke-linecap: round;
+   opacity: .7;
+}
+
+.mp-heart {
+   fill: var(--ink);
+}
+
+.mp-spindle {
+   fill: var(--paper);
+   stroke: var(--ink);
+   stroke-width: 7;
+}
+
+.mp-sheens {
+   filter: blur(9px);
+}
+
+.mp-armbase {
+   fill: var(--paper);
+   stroke: var(--ink);
+   stroke-width: 12;
+}
+
+.mp-arm-rod,
+.mp-arm-weight {
+   stroke: var(--ink);
+   stroke-width: 15;
+   stroke-linecap: round;
+}
+
+.mp-arm-weight {
+   stroke-width: 28;
+}
+
+.mp-arm-head {
+   fill: var(--paper);
+   stroke: var(--ink);
+   stroke-width: 11;
+}
+
+.mp-arm-hub {
+   fill: var(--ink);
+}
+
+.mp-play {
+   flex: none;
+   width: 40px;
+   height: 40px;
+   margin: 0;
+   padding: 0;
+   border: 0;
+   display: grid;
+   place-items: center;
+   border-radius: 47% 53% 50% 50% / 52% 48% 52% 48%;
+   background: var(--ink);
+   color: var(--chalk);
+   touch-action: manipulation;
+   transition: transform .15s cubic-bezier(.3, 1.6, .5, 1);
+}
+
+.mp-play svg {
+   width: 22px;
+   height: 22px;
+   fill: currentColor;
+   stroke: currentColor;
+   stroke-width: 3;
+   stroke-linejoin: round;
+   stroke-linecap: round;
+   pointer-events: none;
+}
+
+.mp-play .i-pause {
+   display: none;
+   fill: none;
+   stroke-width: 4.5;
+}
+
+.mp-play[data-playing="true"] .i-play {
+   display: none;
+}
+
+.mp-play[data-playing="true"] .i-pause {
+   display: inline;
+}
+
+.mp-play:disabled {
+   opacity: .45;
+}
+
+@media (hover: hover) {
+   .mp-play:hover:not(:disabled) {
+      transform: scale(1.08);
+   }
+}
+
+.mp-play:active:not(:disabled) {
+   transform: scale(.94);
+}
+
+.mp-play:focus-visible {
+   outline: 3px dashed var(--ink);
+   outline-offset: 3px;
+}
+
+.mp-scrub {
+   flex: 1;
+   min-width: 0;
+   display: grid;
+}
+
+.mp-seek {
+   width: 100%;
+   margin: 0;
+}
+
+.mp-time {
+   font-size: .9rem;
+   line-height: 1.1;
+   text-align: center;
+   white-space: nowrap;
+   font-variant-numeric: tabular-nums;
+   opacity: .85;
+}
+
+@media (max-width: 520px) {
+   .mp {
+      --w: 320px;
+   }
+}

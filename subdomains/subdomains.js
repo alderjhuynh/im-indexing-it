@@ -5,8 +5,8 @@
   const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
   const mod = (a, n) => ((a % n) + n) % n;
 
-  const DATA_URL = 'subdomains.json';
-  const CLICK_URL = '../assets/sound/clicking_noise_for_the_spinner.mp3';
+  const DATA_URL = new URL('subdomains.json', document.currentScript.src).href;
+  const CLICK_URL = new URL('../assets/sound/clicking_noise_for_the_spinner.mp3', document.currentScript.src).href;
 
   const STEP = 18;
   const K = 5;
@@ -18,18 +18,6 @@
   const SPRING_C = 2 * Math.sqrt(SPRING_K);
   const MAX_V = 45;
   const DRAG_SLOP = 6;
-  const wheel = $('#wheel');
-  const statusEl = $('#status');
-  const spinBtn = $('#spin');
-  const soundBox = $('#sound');
-  const plainEl = $('#plain');
-  const pegL = $('.peg.l');
-  const pegR = $('.peg.r');
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)');
-
-  const y = $('#year');
-  if (y) y.textContent = new Date().getFullYear();
-
   const sound = (() => {
     const MAX_VOICES = 8;
     let ctx = null, buf = null, raw = null;
@@ -109,6 +97,23 @@
       },
     };
   })();
+
+  Site.page(() => {
+  const ac = new AbortController();
+  const { signal } = ac;
+  let alive = true;
+
+  const wheel = $('#wheel');
+  const statusEl = $('#status');
+  const spinBtn = $('#spin');
+  const soundBox = $('#sound');
+  const plainEl = $('#plain');
+  const pegL = $('.peg.l');
+  const pegR = $('.peg.r');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+
+  const y = $('#year');
+  if (y) y.textContent = new Date().getFullYear();
 
   let list = [];
   let N = 0;
@@ -437,13 +442,15 @@
     sound.unlock();
   });
 
-  window.addEventListener('pointerdown', () => sound.unlock(), { once: true });
-  window.addEventListener('keydown', () => sound.unlock(), { once: true });
+  window.addEventListener('pointerdown', () => sound.unlock(), { once: true, signal });
+  window.addEventListener('keydown', () => sound.unlock(), { once: true, signal });
 
-  if ('ResizeObserver' in window) new ResizeObserver(() => { if (rows.length) layout(); }).observe(wheel);
-  else window.addEventListener('resize', () => { if (rows.length) layout(); });
+  let ro = null;
+  if ('ResizeObserver' in window) { ro = new ResizeObserver(() => { if (rows.length) layout(); }); ro.observe(wheel); }
+  else window.addEventListener('resize', () => { if (rows.length) layout(); }, { signal });
 
   loadList().then((items) => {
+    if (!alive) return;
     if (!items.length) throw new Error('empty list');
     list = items;
     N = items.length;
@@ -465,7 +472,17 @@
     spinBtn.disabled = false;
     settle();
   }).catch((err) => {
+    if (!alive) return;
     console.error(err);
     statusEl.textContent = "couldn't load the list :(";
+  });
+
+  return () => {
+    alive = false;
+    ac.abort();
+    if (ro) ro.disconnect();
+    if (raf) cancelAnimationFrame(raf);
+    raf = 0;
+  };
   });
 })();

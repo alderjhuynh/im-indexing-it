@@ -1,21 +1,3 @@
-:root {
-   --disc: #4a322e;
-   --groove: #d3ada4;
-   --label: var(--wash);
-}
-
-@media (prefers-color-scheme: dark) {
-   :root:not([data-theme="light"]) {
-      --disc: #150f0e;
-      --label: #4a3836;
-   }
-}
-
-:root[data-theme="dark"] {
-   --disc: #150f0e;
-   --label: #4a3836;
-}
-
 .deck {
    padding: clamp(22px, 4vw, 36px);
    gap: 12px;

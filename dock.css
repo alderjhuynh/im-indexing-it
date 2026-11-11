@@ -1,0 +1,154 @@
+:root {
+   --mp-peek: 54px;
+   --mp-bleed: 44px;
+   --dock-gap: 12px;
+}
+
+.dock {
+   position: fixed;
+   top: calc(env(safe-area-inset-top, 0px) + clamp(12px, 2.4vw, 22px));
+   right: 0;
+   width: 0;
+   height: 0;
+   z-index: 50;
+   pointer-events: none;
+}
+
+.tab {
+   --tx: calc(100% - var(--mp-peek) - var(--mp-bleed));
+   --ty: 0px;
+   position: absolute;
+   top: 0;
+   right: calc(-1 * var(--mp-bleed));
+   width: var(--w, 310px);
+   max-width: calc(100vw - 12px + var(--mp-bleed));
+   padding: 10px calc(var(--mp-bleed) + 12px) 10px 12px;
+   color: var(--ink);
+   isolation: isolate;
+   pointer-events: auto;
+   will-change: transform, translate;
+   transform: translateX(var(--tx));
+   translate: 0 var(--ty);
+   transition:
+      transform .34s cubic-bezier(.3, 1.2, .5, 1),
+      translate .55s cubic-bezier(.4, 0, .15, 1);
+}
+
+.tab::before {
+   content: "";
+   position: absolute;
+   inset: 0;
+   z-index: -1;
+   border-radius: 52px 6px 6px 52px / 50px 8px 8px 48px;
+   background: var(--paper);
+   box-shadow: inset 0 0 0 3px var(--ink);
+   filter: url(#rough);
+   pointer-events: none;
+}
+
+.tab.is-open,
+.tab.is-hold,
+.tab:has(:focus-visible) {
+   --tx: 0px;
+   z-index: 2;
+}
+
+.tab.is-away {
+   --tx: calc(100% + 16px);
+   visibility: hidden;
+   pointer-events: none;
+   transition:
+      transform .3s ease-in,
+      translate .55s cubic-bezier(.4, 0, .15, 1),
+      visibility 0s linear .3s;
+}
+
+.tab-link {
+   display: flex;
+   align-items: center;
+   gap: 12px;
+   text-decoration: none;
+   color: var(--ink);
+   -webkit-tap-highlight-color: transparent;
+}
+
+.tab-link:focus-visible {
+   outline: none;
+}
+
+.tab-link:focus-visible .tab-icon {
+   outline: 3px dashed var(--ink);
+   outline-offset: 3px;
+}
+
+.tab-icon {
+   flex: none;
+   width: 40px;
+   height: 40px;
+   display: grid;
+   place-items: center;
+   border-radius: 47% 53% 50% 50% / 52% 48% 52% 48%;
+   background: var(--ink);
+   color: var(--chalk);
+   transition: transform .15s cubic-bezier(.3, 1.6, .5, 1);
+}
+
+.tab-icon svg {
+   width: 22px;
+   height: 22px;
+   fill: none;
+   stroke: currentColor;
+   stroke-width: 2;
+   stroke-linejoin: round;
+   stroke-linecap: round;
+}
+
+.tab-text {
+   display: grid;
+   min-width: 0;
+   line-height: 1.15;
+}
+
+.tab-text b {
+   font-family: Sniglet, "Zen Maru Gothic", system-ui, sans-serif;
+   font-weight: 800;
+   color: var(--ink-dp);
+   white-space: nowrap;
+   overflow: hidden;
+   text-overflow: ellipsis;
+}
+
+.tab-text small {
+   font-size: .9rem;
+   opacity: .85;
+   white-space: nowrap;
+   overflow: hidden;
+   text-overflow: ellipsis;
+}
+
+@media (hover: hover) {
+   .tab-link:hover .tab-icon {
+      transform: scale(1.08);
+   }
+}
+
+.tab-link:active .tab-icon {
+   transform: scale(.94);
+}
+
+@media (max-width: 520px) {
+   :root {
+      --mp-peek: 42px;
+   }
+
+   .dock {
+      top: calc(env(safe-area-inset-top, 0px) + 10px);
+   }
+}
+
+@media (prefers-reduced-motion: reduce) {
+   .tab,
+   .tab.is-away {
+      transition-duration: .01s;
+   }
+}
