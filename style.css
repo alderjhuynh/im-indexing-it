@@ -873,3 +873,124 @@ footer {
 footer .squig {
    width: min(320px, 70%);
 }
+
+.hours dd {
+   min-width: 0;
+   overflow-wrap: anywhere;
+}
+
+.presence-dot {
+   display: inline-block;
+   width: .7em;
+   height: .7em;
+   border-radius: 50%;
+   margin-right: .45em;
+   background: var(--ink);
+}
+
+[data-state="online"] > .presence-dot {
+   animation: blink 2.4s ease-in-out infinite;
+}
+
+[data-state="idle"] > .presence-dot {
+   background: linear-gradient(90deg, var(--ink) 50%, transparent 50%);
+   box-shadow: inset 0 0 0 2px var(--ink);
+}
+
+[data-state="dnd"] > .presence-dot {
+   border-radius: 2px;
+}
+
+[data-state="offline"] > .presence-dot {
+   background: transparent;
+   box-shadow: inset 0 0 0 2px var(--ink);
+   opacity: .55;
+}
+
+.gh-head {
+   display: grid;
+   grid-template-columns: 1fr auto;
+   align-items: center;
+   gap: 10px 26px;
+}
+
+.gh-head .btn {
+   text-decoration: none;
+   display: inline-flex;
+   align-items: center;
+   justify-content: center;
+}
+
+.commits {
+   list-style: none;
+   margin: 0;
+   padding: 0;
+   display: grid;
+   gap: 4px;
+}
+
+.commit {
+   display: grid;
+   gap: 2px;
+   padding: 8px 10px 10px;
+   border-radius: 14px;
+   color: inherit;
+   text-decoration: none;
+   border-bottom: 3px dotted color-mix(in srgb, var(--ink) 40%, transparent);
+   transition: background-color .15s;
+}
+
+.commits li:last-child .commit {
+   border-bottom-color: transparent;
+}
+
+.c-msg {
+   color: var(--ink-dp);
+   display: -webkit-box;
+   -webkit-box-orient: vertical;
+   -webkit-line-clamp: 2;
+   line-clamp: 2;
+   overflow: hidden;
+   overflow-wrap: anywhere;
+}
+
+.c-meta {
+   display: flex;
+   flex-wrap: wrap;
+   gap: 2px 14px;
+   font-size: .95rem;
+   opacity: .8;
+}
+
+.c-repo {
+   font-weight: 700;
+}
+
+.c-sha {
+   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+   font-size: .85em;
+   opacity: .75;
+}
+
+.gh-note {
+   text-align: center;
+   padding: 10px 0;
+}
+
+@media (hover: hover) {
+   .commit:hover {
+      background: var(--wash);
+   }
+}
+
+.commit:focus-visible {
+   outline-offset: -3px;
+}
+
+@media (max-width: 560px) {
+   .gh-head {
+      grid-template-columns: 1fr;
+      text-align: center;
+      justify-items: center;
+   }
+}

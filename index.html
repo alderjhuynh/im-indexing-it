@@ -92,7 +92,7 @@
         <div class="row2"><dt>Pronouns</dt><dd>she/it</dd></div>
         <div class="row2"><dt>Location</dt><dd>US</dd></div>
         <div class="row2"><dt>Doing</dt><dd>music, code, worldbuilding</dd></div>
-        <div class="row2"><dt>Status</dt><dd>probably awake</dd></div>
+        <div class="row2"><dt>Status</dt><dd id="lanyardStatus">probably awake</dd></div>
       </dl>
     </section>
 
@@ -111,6 +111,19 @@
 
   </div>
 
+  <section class="panel gh" aria-labelledby="ghTitle">
+    <div class="gh-head">
+      <div>
+        <h2 id="ghTitle">Fresh from the oven</h2>
+        <p>my latest commits, straight from my Github</p>
+      </div>
+      <a class="btn alt sm" href="https://github.com/alderjhuynh" target="_blank" rel="noopener noreferrer external">see the whole bakery</a>
+    </div>
+    <ul class="commits" id="commits" aria-live="polite">
+      <li class="gh-note">turn on JavaScript to see my latest commits</li>
+    </ul>
+  </section>
+
   <footer>
     <div class="squig" aria-hidden="true"></div>
     <span>&copy; <span id="year">2026</span> auraea.fyi</span>
@@ -121,5 +134,7 @@
 <script src="dock.js"></script>
 <script src="player.js"></script>
 <script src="script.js"></script>
+<script src="lanyard.js"></script>
+<script src="github.js"></script>
 </body>
 </html>
