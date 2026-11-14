@@ -13,8 +13,10 @@ class VinylProcessor extends AudioWorkletProcessor {
 
     this.gain = 1;
     this.jumpTo = null;
+    this.gen = 0;
 
     this.maxRate = 6;
+    this.startZone = 0.1 * sampleRate;
     this.sinceReport = 0;
 
     const sr = sampleRate;
@@ -30,9 +32,15 @@ class VinylProcessor extends AudioWorkletProcessor {
           this.R = m.R || m.L;
           this.len = this.L.length;
           this.pos = this.want = 0;
+          this.rate = 0;
+          this.mode = 'free';
+          this.jumpTo = null;
+          this.gain = 1;
+          this.gen = m.gen | 0;
           break;
         case 'motor':
           this.motor = m.on ? 1 : 0;
+          this.snapStart();
           break;
         case 'hand':
           this.mode = 'hand';
@@ -46,6 +54,12 @@ class VinylProcessor extends AudioWorkletProcessor {
           break;
       }
     };
+  }
+
+  snapStart() {
+    if (this.motor && this.mode === 'free' && this.pos < this.startZone && this.rate < this.motor) {
+      this.rate = this.motor;
+    }
   }
 
   process(inputs, outputs) {
@@ -85,7 +99,7 @@ class VinylProcessor extends AudioWorkletProcessor {
           this.rate = 0;
           if (this.motor) {
             this.motor = 0;
-            this.port.postMessage({ type: 'ended' });
+            this.port.postMessage({ type: 'ended', gen: this.gen });
           }
         } else if (this.rate > 0) {
           this.rate = 0;
@@ -98,6 +112,7 @@ class VinylProcessor extends AudioWorkletProcessor {
           this.gain = 0;
           this.pos = this.want = this.jumpTo;
           this.jumpTo = null;
+          this.snapStart();
         }
       } else if (this.gain < 1) {
         this.gain = Math.min(1, this.gain + this.gStep);
@@ -118,6 +133,7 @@ class VinylProcessor extends AudioWorkletProcessor {
         t: currentTime,
         pos: this.pos / sampleRate,
         rate: this.rate,
+        gen: this.gen,
       });
     }
     return true;

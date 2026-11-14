@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Vinyl - auraea.fyi</title>
-<meta name="description" content="A little turntable. Grab the record and spin it to scrub through the song.">
+<meta name="description" content="A little turntable. Pick a song, then grab the record and spin it to scrub.">
 <meta name="theme-color" content="#fffdfa">
 <link rel="icon" type="image/svg+xml" href="../favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -80,10 +80,15 @@
     <p class="hint" id="status" aria-live="polite">hold on, give it just a moment...</p>
 
     <div class="controls">
+      <button class="btn alt sm skip" id="prev" type="button" aria-label="Previous song" disabled>Prev</button>
       <button class="btn sm" id="play" type="button" disabled>Play</button>
+      <button class="btn alt sm skip" id="next" type="button" aria-label="Next song" disabled>Next</button>
       <span class="time" id="time" aria-hidden="true">0:00 / 0:00</span>
       <input id="seek" type="range" min="0" max="1000" value="0" step="1" aria-label="Seek" disabled>
     </div>
+
+    <h2 class="crate-title" id="crateTitle">The crate</h2>
+    <ol class="tracks" id="tracks" aria-labelledby="crateTitle"></ol>
   </section>
 
   <footer>

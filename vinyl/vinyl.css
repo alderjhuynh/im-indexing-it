@@ -196,6 +196,85 @@ html.is-grabbing #hit {
    min-width: 112px;
 }
 
+.controls .btn.skip {
+   min-width: 0;
+   padding-inline: 16px;
+}
+
+.crate-title {
+   margin: 8px 0 0;
+}
+
+.tracks {
+   list-style: none;
+   margin: 0;
+   padding: 0;
+   display: grid;
+   gap: 6px;
+}
+
+.track {
+   width: 100%;
+   display: flex;
+   align-items: baseline;
+   gap: 12px;
+   padding: 8px 16px;
+   font: inherit;
+   text-align: left;
+   color: var(--ink);
+   background: none;
+   border: 0;
+   border-radius: 22px 18px 24px 20px / 20px 24px 18px 22px;
+   touch-action: manipulation;
+   transition: background-color .15s, transform .1s;
+}
+
+.track-n {
+   flex: none;
+   width: 1.4em;
+   opacity: .6;
+   font-variant-numeric: tabular-nums;
+}
+
+.track-name {
+   flex: 1;
+   min-width: 0;
+   overflow: hidden;
+   text-overflow: ellipsis;
+   white-space: nowrap;
+}
+
+.track-dur {
+   flex: none;
+   opacity: .7;
+   font-variant-numeric: tabular-nums;
+}
+
+@media (hover: hover) {
+   .track:hover {
+      background: var(--wash);
+   }
+}
+
+.track:active {
+   transform: translateY(2px);
+}
+
+.track:focus-visible {
+   outline: 3px dashed var(--ink);
+   outline-offset: 2px;
+}
+
+.track[aria-current="true"] {
+   background: var(--ink);
+   color: var(--chalk);
+}
+
+.track[aria-current="true"] .track-n,
+.track[aria-current="true"] .track-dur {
+   opacity: .85;
+}
+
 .time {
    font-variant-numeric: tabular-nums;
    white-space: nowrap;

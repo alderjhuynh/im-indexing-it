@@ -1,0 +1,29 @@
+{
+  "songs": [
+    {
+      "title": "field of flowers",
+      "file": "field of flowers.mp3",
+      "duration": 214
+    },
+    {
+      "title": "terminal lucidity",
+      "file": "terminal lucidity.mp3",
+      "duration": 217
+    },
+    {
+      "title": "PIERCE THE HEAVENS",
+      "file": "PIERCE THE HEAVENS.mp3",
+      "duration": 204
+    },
+    {
+      "title": "yes, you can put drums on anything",
+      "file": "yes, you can put drums on anything.mp3",
+      "duration": 173
+    },
+    {
+      "title": "im never writing my own vst ever again",
+      "file": "im never writing my own vst ever again.mp3",
+      "duration": 197
+    }
+  ]
+}

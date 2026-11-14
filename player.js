@@ -3,7 +3,9 @@
   if (window.Vinyl) return;
 
   const ROOT = new URL('./', document.currentScript.src).href;
-  const SONG_URL = ROOT + 'assets/sound/coffeeshop.m4a';
+  const MANIFEST_URL = ROOT + 'assets/songs.json';
+  const SONGS_DIR = ROOT + 'assets/songs/';
+  const FALLBACK_TRACKS = [{ title: 'coffeeshop', url: ROOT + 'assets/sound/coffeeshop.m4a', duration: 0 }];
   const WORKLET_URL = ROOT + 'vinyl/processor.js';
 
   const DEG_PER_SEC = 200;
@@ -45,6 +47,12 @@
   let rep = { t: 0, pos: 0, rate: 0 };
   let miniSuppressed = false;
 
+  let tracks = [];
+  let index = 0;
+  let loadingTrack = false;
+  let gen = 0;
+  let fetchCtl = null;
+
   const listeners = new Set();
   const emit = () => listeners.forEach((fn) => {
     try { fn(); } catch (err) { console.error(err); }
@@ -72,36 +80,110 @@
         ctx = new AC({ latencyHint: 'interactive' });
         await ctx.audioWorklet.addModule(WORKLET_URL);
 
-        const res = await fetch(SONG_URL);
-        if (!res.ok) throw new Error('song ' + res.status);
-        let buf = await ctx.decodeAudioData(await res.arrayBuffer());
-        duration = buf.duration;
-
-        const L = buf.getChannelData(0).slice();
-        const R = buf.numberOfChannels > 1 ? buf.getChannelData(1).slice() : null;
-        buf = null;
-
         node = new AudioWorkletNode(ctx, 'vinyl-processor', { numberOfInputs: 0, outputChannelCount: [2] });
         node.connect(ctx.destination);
         node.port.onmessage = (e) => {
           const m = e.data;
+          if (m.gen !== gen) return;
           if (m.type === 'pos') {
             if (!dragging) rep = { t: m.t, pos: m.pos, rate: m.rate };
           } else if (m.type === 'ended') {
             playing = false; started = false; ended = true;
             emit();
+            if (tracks.length > 1) select(index + 1, { play: true });
           }
         };
-        node.port.postMessage({ type: 'load', L, R }, R ? [L.buffer, R.buffer] : [L.buffer]);
-        ready = true;
+
+        tracks = await loadManifest();
+        emit();
+        await loadTrack(0, false);
       } catch (err) {
         console.error(err);
         failed = true;
+        emit();
       }
-      emit();
     })();
     return loading;
   }
+
+  async function loadManifest() {
+    try {
+      const res = await fetch(MANIFEST_URL);
+      if (!res.ok) throw new Error('manifest ' + res.status);
+      const data = await res.json();
+      const list = (Array.isArray(data) ? data : data.songs || []).map((s) => ({
+        title: s.title || String(s.file).replace(/\.[^.]+$/, ''),
+        url: SONGS_DIR + encodeURIComponent(s.file),
+        duration: s.duration || 0,
+      }));
+      if (!list.length) throw new Error('empty manifest');
+      return list;
+    } catch (err) {
+      console.error(err);
+      return FALLBACK_TRACKS;
+    }
+  }
+
+  async function loadTrack(i, autoplay) {
+    if (!node || !tracks[i]) return;
+    const myGen = ++gen;
+    if (fetchCtl) fetchCtl.abort();
+    const ctl = fetchCtl = new AbortController();
+
+    index = i;
+    loadingTrack = true;
+    ready = false;
+    failed = false;
+    playing = false; started = false; ended = false;
+    dragging = false;
+    duration = 0;
+    rep = { t: ctx.currentTime, pos: 0, rate: 0 };
+    node.port.postMessage({ type: 'motor', on: false });
+    emit();
+
+    try {
+      const res = await fetch(tracks[i].url, { signal: ctl.signal });
+      if (!res.ok) throw new Error('song ' + res.status);
+      const bytes = await res.arrayBuffer();
+      const buf = await ctx.decodeAudioData(bytes);
+      if (myGen !== gen) return;
+
+      duration = buf.duration;
+      const L = buf.getChannelData(0).slice();
+      const R = buf.numberOfChannels > 1 ? buf.getChannelData(1).slice() : null;
+      node.port.postMessage({ type: 'load', L, R, gen: myGen }, R ? [L.buffer, R.buffer] : [L.buffer]);
+      rep = { t: ctx.currentTime, pos: 0, rate: 0 };
+      ready = true;
+    } catch (err) {
+      if (myGen !== gen) return;
+      console.error(err);
+      failed = true;
+    }
+    loadingTrack = false;
+    emit();
+
+    if (ready && autoplay) {
+      await ensureRunning();
+      if (myGen === gen) setPlaying(true);
+    }
+    if (ready && tracks.length > 1) {
+      const nxt = tracks[(i + 1) % tracks.length];
+      fetch(nxt.url).catch(() => { });
+    }
+  }
+
+  function select(i, opts) {
+    if (!tracks.length) return;
+    const n = tracks.length;
+    i = ((i % n) + n) % n;
+    return loadTrack(i, !!(opts && opts.play));
+  }
+
+  const next = () => select(index + 1, { play: playing });
+  const prev = () => {
+    if (ready && pos() > 3) { seekTo(0); return; }
+    return select(index - 1, { play: playing });
+  };
 
   function engage() {
     if (engaged) return;
@@ -301,9 +383,14 @@
   window.Vinyl = {
     DEG_PER_SEC, ARM_REST,
     init, toggle, seekTo, grab, drag, release,
+    select, next, prev,
     wake: ensureRunning,
     pos, fmt, on, onFrame, bindRecord, drawRecord, armTarget,
     hideMini(v) { miniSuppressed = !!v; emit(); },
+    get tracks() { return tracks; },
+    get index() { return index; },
+    get track() { return tracks[index] || null; },
+    get loading() { return loadingTrack; },
     get ready() { return ready; },
     get failed() { return failed; },
     get duration() { return duration; },
@@ -353,15 +440,30 @@
                   aria-valuemin="0" aria-valuemax="0" aria-valuenow="0" aria-valuetext="0:00"/>
         </svg>
       </div>
-      <button class="mp-play" type="button" aria-label="Play" data-playing="false" disabled>
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path class="i-play" d="M8.500 5.500v13l10.500-6.500z"/>
-          <path class="i-pause" d="M8.500 6v12M15.500 6v12"/>
-        </svg>
-      </button>
-      <div class="mp-scrub">
+      <div class="mp-side">
+        <span class="mp-title" aria-live="polite">&nbsp;</span>
+        <div class="mp-btns">
+          <button class="mp-skip mp-prev" type="button" aria-label="Previous song" disabled>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M19 5.500v13l-9.500-6.500z"/>
+              <path class="i-bar" d="M5.500 5.500v13"/>
+            </svg>
+          </button>
+          <button class="mp-play" type="button" aria-label="Play" data-playing="false" disabled>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path class="i-play" d="M8.500 5.500v13l10.500-6.500z"/>
+              <path class="i-pause" d="M8.500 6v12M15.500 6v12"/>
+            </svg>
+          </button>
+          <button class="mp-skip mp-next" type="button" aria-label="Next song" disabled>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M5 5.500v13l9.500-6.500z"/>
+              <path class="i-bar" d="M18.500 5.500v13"/>
+            </svg>
+          </button>
+          <span class="mp-time" aria-hidden="true">0:00 / 0:00</span>
+        </div>
         <input class="mp-seek" type="range" min="0" max="1000" value="0" step="1" aria-label="Seek" disabled>
-        <span class="mp-time" aria-hidden="true">0:00 / 0:00</span>
       </div>
     </div>`;
   Dock.add(mini, { order: 0 });
@@ -373,6 +475,9 @@
   const playBtn = $m('.mp-play');
   const seek = $m('.mp-seek');
   const timeEl = $m('.mp-time');
+  const titleEl = $m('.mp-title');
+  const prevBtn = $m('.mp-prev');
+  const nextBtn = $m('.mp-next');
 
   drawRecord($m('.mp-grooves'), $m('.mp-sheens'), { step: 14, sheenId: 'mp-sheen' });
 
@@ -427,6 +532,8 @@
   bindRecord(hit, { onGrab: hold, onRelease: unhold });
 
   playBtn.addEventListener('click', () => toggle());
+  prevBtn.addEventListener('click', () => prev());
+  nextBtn.addEventListener('click', () => next());
 
   seek.addEventListener('pointerdown', () => { seeking = true; hold(); ensureRunning(); });
   const endSeek = () => { if (!seeking) return; seeking = false; unhold(); };
@@ -466,7 +573,6 @@
       if (show) {
         armAngle = armTarget(pos());
         lastSecond = -1;
-        hit.setAttribute('aria-valuemax', Math.round(duration));
         offFrame = onFrame(frame);
       } else {
         if (offFrame) { offFrame(); offFrame = null; }
@@ -476,6 +582,15 @@
     playBtn.setAttribute('aria-label', playing ? 'Pause' : 'Play');
     playBtn.disabled = !ready;
     seek.disabled = !ready;
+    const multi = tracks.length > 1;
+    prevBtn.disabled = nextBtn.disabled = !multi;
+
+    const t = tracks[index];
+    const label = !t ? '\u00a0' : loadingTrack ? t.title + '\u2026' : failed ? "couldn't load " + t.title : t.title;
+    if (titleEl.textContent !== label) titleEl.textContent = label;
+    titleEl.title = t ? t.title : '';
+    hit.setAttribute('aria-valuemax', Math.round(duration));
+    lastSecond = -1;
   }
   on(sync);
 })();
