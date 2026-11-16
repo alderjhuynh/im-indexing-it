@@ -41,31 +41,6 @@
       c.textContent = +c.textContent + (on ? 1 : -1);
     }));
 
-    const wrap = $('#stamps'), msg = $('#free'), N = 10;
-    for (let i = 0; i < N; i++) {
-      const b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'stamp';
-      b.setAttribute('aria-pressed', 'false');
-      b.setAttribute('aria-label', 'Stamp ' + (i + 1));
-      b.innerHTML = '<i class="ic-heart"></i>';
-      wrap.appendChild(b);
-    }
-    const update = () => {
-      const n = wrap.querySelectorAll('.on').length;
-      msg.textContent = n === 0 ? 'tap a circle to stamp it!'
-        : n < N ? n + ' / ' + N + ' stamps, keep going!'
-        : 'now wasn\'t that fun?';
-    };
-    wrap.addEventListener('click', e => {
-      const b = e.target.closest('.stamp');
-      if (!b) return;
-      const on = !b.classList.contains('on');
-      b.classList.toggle('on', on);
-      b.setAttribute('aria-pressed', on);
-      update();
-    });
-
     const clickBtn = $('main .btn');
 
     if (clickBtn) {

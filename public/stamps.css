@@ -1,0 +1,148 @@
+:root {
+   --ic-star: url("data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20viewBox=%270%200%2048%2048%27%3E%3Cpath%20d=%27M24%205l5.6%2011.6%2012.7%201.7-9.3%208.9%202.3%2012.6L24%2033.6%2012.7%2039.8l2.3-12.6-9.3-8.9%2012.7-1.7z%27%20stroke=%27black%27%20stroke-width=%273%27%20stroke-linejoin=%27round%27/%3E%3C/svg%3E");
+   --ic-mug: url("data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20viewBox=%270%200%2048%2048%27%3E%3Cpath%20fill-rule=%27evenodd%27%20d=%27M7%2017h26v14a9%209%200%200%201-9%209h-8a9%209%200%200%201-9-9zM33%2021h3.5a5.5%205.5%200%200%201%200%2011H33v-3.5h3.5a2%202%200%200%200%200-4H33z%27/%3E%3Cpath%20d=%27M14%205.5h3v7h-3zM22%203.5h3v9h-3z%27%20stroke=%27black%27%20stroke-width=%271%27%20stroke-linejoin=%27round%27/%3E%3C/svg%3E");
+   --ic-flower: url("data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20viewBox=%270%200%2048%2048%27%3E%3Cg%3E%3Ccircle%20cx=%2724.00%27%20cy=%2710.00%27%20r=%278.5%27/%3E%3Ccircle%20cx=%2736.12%27%20cy=%2717.00%27%20r=%278.5%27/%3E%3Ccircle%20cx=%2736.12%27%20cy=%2731.00%27%20r=%278.5%27/%3E%3Ccircle%20cx=%2724.00%27%20cy=%2738.00%27%20r=%278.5%27/%3E%3Ccircle%20cx=%2711.88%27%20cy=%2731.00%27%20r=%278.5%27/%3E%3Ccircle%20cx=%2711.88%27%20cy=%2717.00%27%20r=%278.5%27/%3E%3Ccircle%20cx=%2724%27%20cy=%2724%27%20r=%273.4%27/%3E%3C/g%3E%3C/svg%3E");
+   --ic-moon: url("data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20viewBox=%270%200%2048%2048%27%3E%3Cpath%20d=%27M30%205A20%2020%200%201%200%2043%2033%2016%2016%200%200%201%2030%205z%27%20stroke=%27black%27%20stroke-width=%272%27%20stroke-linejoin=%27round%27/%3E%3C/svg%3E");
+   --ic-cat: url("data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20viewBox=%270%200%2048%2048%27%3E%3Cpath%20fill-rule=%27evenodd%27%20d=%27M7%206.5l11%207.5q6-1.6%2012%200l11-7.5%201.5%2018.5q0%2015-18.5%2015T5.5%2025zM16.5%2021.5a3.6%203.6%200%201%200%200%207.2%203.6%203.6%200%200%200%200-7.2zM31.5%2021.5a3.6%203.6%200%201%200%200%207.2%203.6%203.6%200%200%200%200-7.2zM20.5%2031.5h7l-3.5%204.2z%27%20stroke=%27black%27%20stroke-width=%272%27%20stroke-linejoin=%27round%27/%3E%3C/svg%3E");
+}
+
+.ic {
+   display: inline-block;
+   width: 100%;
+   aspect-ratio: 1;
+   background: currentColor;
+   -webkit-mask: var(--ic) center / contain no-repeat;
+   mask: var(--ic) center / contain no-repeat;
+}
+.ic[data-ic="heart"]  { --ic: var(--heart); }
+.ic[data-ic="star"]   { --ic: var(--ic-star); }
+.ic[data-ic="mug"]    { --ic: var(--ic-mug); }
+.ic[data-ic="flower"] { --ic: var(--ic-flower); }
+.ic[data-ic="moon"]   { --ic: var(--ic-moon); }
+.ic[data-ic="cat"]    { --ic: var(--ic-cat); }
+
+.stamp {
+   position: relative;
+   cursor: default;
+}
+.stamp .ic {
+   width: 60%;
+   opacity: 0;
+   transform: scale(0) rotate(-20deg);
+   transition: all .25s cubic-bezier(.3, 1.6, .5, 1);
+}
+.stamp.on .ic {
+   opacity: 1;
+   transform: scale(1) rotate(-6deg);
+}
+.stamp.mine {
+   box-shadow: 0 0 0 4px var(--wash);
+   border-color: var(--ink-dp);
+}
+.stamp.anon .ic { opacity: .8; }
+
+.stamp[data-can] { cursor: pointer; }
+.stamp.on { cursor: pointer; }
+@media (hover: hover) {
+   .stamp[data-can]:not(.on):hover .ic {
+      opacity: .25;
+      transform: scale(1) rotate(-6deg);
+   }
+}
+
+.stamp .av {
+   position: absolute;
+   right: -5px;
+   bottom: -5px;
+   width: 36%;
+   aspect-ratio: 1;
+   border-radius: 50%;
+   object-fit: cover;
+   border: 2px solid var(--paper);
+   background: var(--wash);
+}
+
+.stamp-picker {
+   display: grid;
+   grid-template-columns: repeat(6, minmax(0, 1fr));
+   justify-content: center;
+   gap: 10px 8px;
+   max-width: 280px;
+   margin: 0 auto;
+   width: 100%;
+}
+.stamp-picker[hidden] { display: none; }
+
+.pick {
+   all: unset;
+   box-sizing: border-box;
+   width: 100%;
+   aspect-ratio: 1;
+   display: grid;
+   place-items: center;
+   border: 3px dashed var(--ink);
+   border-radius: 47% 53% 50% 50% / 52% 48% 52% 48%;
+   color: var(--ink);
+   cursor: pointer;
+   touch-action: manipulation;
+   transition: transform .15s cubic-bezier(.3, 1.6, .5, 1);
+}
+.pick .ic { width: 60%; }
+.pick[aria-pressed="true"] {
+   border-style: solid;
+   background: var(--wash);
+   transform: rotate(-4deg) scale(1.08);
+}
+.pick:focus-visible,
+.anon-opt input:focus-visible {
+   outline: 3px dashed var(--ink);
+   outline-offset: 3px;
+}
+
+.anon-opt {
+   grid-column: 1 / -1;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   gap: 8px;
+   font-size: 1rem;
+   cursor: pointer;
+}
+.anon-opt input { accent-color: var(--ink); width: 1.1em; height: 1.1em; margin: 0; }
+
+.stamp-auth {
+   display: flex;
+   flex-wrap: wrap;
+   justify-content: center;
+   align-items: center;
+   gap: 10px 14px;
+   font-size: 1rem;
+}
+.stamp-auth a.btn { text-decoration: none; }
+.stamp-auth .me {
+   display: inline-flex;
+   align-items: center;
+   gap: 8px;
+}
+.stamp-auth .me img {
+   width: 26px;
+   height: 26px;
+   border-radius: 50%;
+   object-fit: cover;
+   border: 2px solid var(--ink);
+}
+.stamp-auth .quiet {
+   all: unset;
+   cursor: pointer;
+   text-decoration: underline;
+   text-underline-offset: 3px;
+}
+.stamp-auth .quiet:focus-visible { outline: 3px dashed var(--ink); outline-offset: 3px; }
+
+.loyalty.done .stamps { animation: card-done .7s ease-out 1; }
+@keyframes card-done {
+   0%   { transform: rotate(0) scale(1); }
+   25%  { transform: rotate(-2deg) scale(1.03); }
+   55%  { transform: rotate(1.6deg) scale(1.02); }
+   100% { transform: rotate(0) scale(1); }
+}

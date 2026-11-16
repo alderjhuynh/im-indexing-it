@@ -13,6 +13,7 @@
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="cursors.css">
 <link rel="stylesheet" href="dock.css">
+<link rel="stylesheet" href="stamps.css">
 <link rel="stylesheet" href="player.css">
 </head>
 <body>
@@ -106,7 +107,9 @@
     <section class="panel loyalty" aria-labelledby="loyTitle">
       <h2 id="loyTitle">Stamp card</h2>
       <div class="stamps" id="stamps"></div>
-      <p class="free" id="free">tap a circle to stamp it!</p>
+      <div class="stamp-picker" id="stampPicker" hidden></div>
+      <p class="free" id="free" aria-live="polite">my server is bad, give it a minute...</p>
+      <div class="stamp-auth" id="stampAuth"></div>
     </section>
 
   </div>
@@ -134,6 +137,7 @@
 <script src="dock.js"></script>
 <script src="player.js"></script>
 <script src="script.js"></script>
+<script src="stamps.js"></script>
 <script src="lanyard.js"></script>
 <script src="github.js"></script>
 </body>
