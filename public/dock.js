@@ -165,8 +165,6 @@
     setTimeout(() => setVisible(el, true), 350 + i * 110);
   });
 
-  // Login tab — same flow as the stamp card: /api/card tells us who we are,
-  // /api/login starts the Discord OAuth, /api/logout ends the session.
   const loginTab = root.querySelector('[data-tab="login"]');
   if (loginTab) {
     const loginCfg = TABS.find((t) => t.id === 'login') || {};
@@ -182,7 +180,7 @@
       const on = !!me.loggedIn;
       loginTab.classList.toggle('is-me', on);
       titleEl.textContent = on && me.name ? me.name : IDLE.title;
-      blurbEl.textContent = on ? (busy ? 'logging out…' : 'logged in — tap to log out') : IDLE.blurb;
+      blurbEl.textContent = on ? (busy ? 'logging out…' : 'logged in - tap to log out') : IDLE.blurb;
       loginTab.setAttribute('aria-label', on ? 'Log out of Discord' : 'Log in with Discord');
 
       let img = iconEl.querySelector('img');
@@ -205,7 +203,7 @@
         if (!res.ok) return;
         me = (await res.json()).me || { loggedIn: false };
         render();
-      } catch (_) { /* offline: keep whatever we last knew */ }
+      } catch (_) { }
     }
 
     async function logout() {
@@ -215,7 +213,7 @@
       try {
         await fetch('/api/logout', { method: 'POST', credentials: 'same-origin' });
         me = { loggedIn: false };
-      } catch (_) { /* re-check below to find out the truth */ }
+      } catch (_) { }
       busy = false;
       render();
       check();
@@ -223,7 +221,7 @@
 
     loginTab.addEventListener('click', (e) => {
       if (!me.loggedIn || busy) return;
-      e.preventDefault(); // swallow the /api/login link while signed in
+      e.preventDefault();
       logout();
     });
 
