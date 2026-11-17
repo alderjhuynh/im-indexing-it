@@ -103,6 +103,13 @@
    stroke-linecap: round;
 }
 
+.tab-icon img {
+   width: 100%;
+   height: 100%;
+   border-radius: inherit;
+   object-fit: cover;
+}
+
 .tab-text {
    display: grid;
    min-width: 0;
