@@ -14,6 +14,8 @@
   },
   "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Card"] }],
 
+  "observability": { "enabled": true },
+
   "vars": {
     "DISCORD_CLIENT_ID": "1572026720486297631",
     "CARD_SIZE": "10",

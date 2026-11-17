@@ -319,9 +319,12 @@
 
     const params = new URLSearchParams(location.search);
     const result = params.get('login');
+    const reason = params.get('reason');
     if (result && LOGIN_NOTES[result]) {
-      flashNote(LOGIN_NOTES[result], 6000);
+      const why = result === 'error' && /^[a-z0-9_]{1,40}$/.test(reason || '') ? ' (' + reason + ')' : '';
+      flashNote(LOGIN_NOTES[result].replace('work.', 'work' + why + '.'), 10000);
       params.delete('login');
+      params.delete('reason');
       const qs = params.toString();
       history.replaceState(history.state, '', location.pathname + (qs ? '?' + qs : '') + location.hash);
     }

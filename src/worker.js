@@ -20,6 +20,12 @@ const redirect = (location, cookies = []) => {
   return new Response(null, { status: 302, headers: h });
 };
 
+const loginFail = (reason, clearState, detail) => {
+  console.error("discord login failed:", reason, detail ?? "");
+  return redirect(`/?login=error&reason=${reason}`, [clearState]);
+};
+const safeCode = (s) => String(s || "").toLowerCase().replace(/[^a-z_]/g, "").slice(0, 30);
+
 const cardStub = (env) => env.CARD.get(env.CARD.idFromName("main"));
 
 function avatarUrl(id, hash) {
@@ -52,6 +58,8 @@ export default {
 
       if (pathname === "/api/login" && request.method === "GET") {
         if (!env.DISCORD_CLIENT_ID) return json({ error: "discord_not_configured" }, 500);
+        const missing = !env.DISCORD_CLIENT_SECRET ? "missing_client_secret" : !env.SESSION_SECRET ? "missing_session_secret" : null;
+        if (missing) return loginFail(missing, cookie(STATE_COOKIE, "", { maxAge: 0, path: "/api", secure }));
         const state = crypto.randomUUID();
         const authorize = new URL("https://discord.com/oauth2/authorize");
         authorize.search = new URLSearchParams({
@@ -69,39 +77,59 @@ export default {
         const clearState = cookie(STATE_COOKIE, "", { maxAge: 0, path: "/api", secure });
         if (url.searchParams.get("error")) return redirect("/?login=denied", [clearState]);
 
+        if (!env.DISCORD_CLIENT_SECRET) return loginFail("missing_client_secret", clearState);
+        if (!env.SESSION_SECRET) return loginFail("missing_session_secret", clearState);
+
         const code = url.searchParams.get("code");
         const state = url.searchParams.get("state");
-        if (!code || !state || state !== cookies[STATE_COOKIE]) return redirect("/?login=error", [clearState]);
+        if (!code || !state || state !== cookies[STATE_COOKIE]) {
+          return loginFail("state_mismatch", clearState, { hasCode: !!code, hasStateParam: !!state, hasStateCookie: !!cookies[STATE_COOKIE] });
+        }
 
-        const tokenRes = await fetch("https://discord.com/api/oauth2/token", {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded", "User-Agent": UA },
-          body: new URLSearchParams({
-            client_id: env.DISCORD_CLIENT_ID,
-            client_secret: env.DISCORD_CLIENT_SECRET,
-            grant_type: "authorization_code",
-            code,
-            redirect_uri: `${url.origin}/api/callback`,
-          }),
-        });
-        if (!tokenRes.ok) return redirect("/?login=error", [clearState]);
+        let tokenRes;
+        try {
+          tokenRes = await fetch("https://discord.com/api/oauth2/token", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded", "User-Agent": UA },
+            body: new URLSearchParams({
+              client_id: env.DISCORD_CLIENT_ID,
+              client_secret: env.DISCORD_CLIENT_SECRET,
+              grant_type: "authorization_code",
+              code,
+              redirect_uri: `${url.origin}/api/callback`,
+            }),
+          });
+        } catch (err) {
+          return loginFail("token_network", clearState, String(err));
+        }
+        if (!tokenRes.ok) {
+          const text = await tokenRes.text().catch(() => "");
+          let why = "";
+          try { why = safeCode(JSON.parse(text).error); } catch (_) { /* not JSON, e.g. an HTML block page */ }
+          return loginFail(`token_${tokenRes.status}${why ? "_" + why : ""}`, clearState, { redirect_uri: `${url.origin}/api/callback`, body: text.slice(0, 300) });
+        }
         const { access_token } = await tokenRes.json();
 
         const meRes = await fetch("https://discord.com/api/users/@me", {
           headers: { Authorization: `Bearer ${access_token}`, "User-Agent": UA },
         });
-        if (!meRes.ok) return redirect("/?login=error", [clearState]);
+        if (!meRes.ok) return loginFail(`me_${meRes.status}`, clearState, (await meRes.text().catch(() => "")).slice(0, 300));
         const me = await meRes.json();
 
-        const token = await sign(
-          {
-            id: me.id,
-            name: String(me.global_name || me.username).slice(0, 40),
-            avatar: me.avatar || null,
-            exp: Math.floor(Date.now() / 1000) + SESSION_DAYS * 86400,
-          },
-          env.SESSION_SECRET,
-        );
+        let token;
+        try {
+          token = await sign(
+            {
+              id: me.id,
+              name: String(me.global_name || me.username).slice(0, 40),
+              avatar: me.avatar || null,
+              exp: Math.floor(Date.now() / 1000) + SESSION_DAYS * 86400,
+            },
+            env.SESSION_SECRET,
+          );
+        } catch (err) {
+          return loginFail("session_sign_failed", clearState, String(err));
+        }
         return redirect("/?login=ok", [
           clearState,
           cookie(SESSION_COOKIE, token, { maxAge: SESSION_DAYS * 86400, secure }),
