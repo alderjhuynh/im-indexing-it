@@ -2,6 +2,7 @@
   'use strict';
 
   const POLL_MS = 20000;
+  const IDLE_MS = 60000;
   const FALLBACK_SIZE = 10;
   const ICON_LABEL = { heart: 'heart', star: 'star', mug: 'coffee mug', flower: 'flower', moon: 'moon', cat: 'cat' };
   const ERRORS = {
@@ -41,6 +42,12 @@
     let authSig = '';
     let icon = store.get('stamp-icon', 'heart');
     let anon = store.get('stamp-anon', '0') === '1';
+
+    let lastActivity = Date.now();
+    const bump = () => { lastActivity = Date.now(); };
+    for (const ev of ['pointerdown', 'pointermove', 'keydown', 'wheel', 'scroll', 'touchstart'])
+      document.addEventListener(ev, bump, { passive: true, signal });
+    const idle = () => Date.now() - lastActivity > IDLE_MS;
 
     const canStamp = () => !!(data && data.me.loggedIn && !data.youStamped && !data.complete);
 
@@ -228,6 +235,9 @@
         if (!res.ok) throw new Error('HTTP ' + res.status);
         data = await res.json();
         failed = false;
+        // share login state with the dock so it never needs its own request here
+        store.set('dock-me', JSON.stringify({ ...data.me, at: Date.now() }));
+        window.dispatchEvent(new CustomEvent('dock:me', { detail: data.me }));
       } catch (err) {
         if (err.name === 'AbortError') return;
         failed = true;
@@ -310,8 +320,12 @@
       if (e.target.closest('[data-act="logout"]')) logout();
     }, { signal });
 
-    document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); }, { signal });
-    const poll = setInterval(() => { if (!document.hidden && !busy) refresh(); }, POLL_MS);
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) return;
+      bump(); // coming back to the tab counts as activity
+      refresh();
+    }, { signal });
+    const poll = setInterval(() => { if (!document.hidden && !busy && !idle()) refresh(); }, POLL_MS);
 
     buildSlots(FALLBACK_SIZE);
     render();

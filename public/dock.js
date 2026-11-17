@@ -173,8 +173,25 @@
     const titleEl = loginTab.querySelector('.tab-text b');
     const blurbEl = loginTab.querySelector('.tab-text small');
     const IDLE = { title: loginCfg.title || 'Login', blurb: loginCfg.blurb || 'via Discord' };
-    let me = { loggedIn: false };
+    const ME_KEY = 'dock-me';
+    const ME_TTL = 3600000;
+    const store = {
+      get() {
+        try {
+          const v = JSON.parse(localStorage.getItem(ME_KEY));
+          return v && typeof v === 'object' ? v : null;
+        } catch (_) { return null; }
+      },
+      set(v) { try { localStorage.setItem(ME_KEY, JSON.stringify({ ...v, at: Date.now() })); } catch (_) { } },
+      stale() {
+        const v = this.get();
+        return !v || Date.now() - (v.at || 0) > ME_TTL;
+      },
+    };
+    let me = store.get() || { loggedIn: false };
     let busy = false;
+
+    const cardMounted = () => !!document.getElementById('stamps');
 
     function render() {
       const on = !!me.loggedIn;
@@ -197,11 +214,13 @@
       }
     }
 
-    async function check() {
+    async function check(force) {
+      if (cardMounted() && !force) return;
       try {
         const res = await fetch('/api/card', { credentials: 'same-origin', cache: 'no-store' });
         if (!res.ok) return;
         me = (await res.json()).me || { loggedIn: false };
+        store.set(me);
         render();
       } catch (_) { }
     }
@@ -213,11 +232,18 @@
       try {
         await fetch('/api/logout', { method: 'POST', credentials: 'same-origin' });
         me = { loggedIn: false };
+        store.set(me);
       } catch (_) { }
       busy = false;
       render();
-      check();
+      check(true);
     }
+
+    window.addEventListener('dock:me', (e) => {
+      me = e.detail || { loggedIn: false };
+      store.set(me);
+      render();
+    });
 
     loginTab.addEventListener('click', (e) => {
       if (!me.loggedIn || busy) return;
@@ -225,9 +251,11 @@
       logout();
     });
 
-    document.addEventListener('visibilitychange', () => { if (!document.hidden) check(); });
+    if (store.stale()) check();
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden && store.stale()) check();
+    });
 
     render();
-    check();
   }
 })();
