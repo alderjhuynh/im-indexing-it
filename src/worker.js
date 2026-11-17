@@ -14,10 +14,10 @@ const json = (data, status = 200, headers = {}) =>
     headers: { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store", ...headers },
   });
 
-const redirect = (location, cookies = []) => {
+const redirect = (location, cookies = [], status = 302) => {
   const h = new Headers({ Location: location, "Cache-Control": "no-store" });
   for (const c of cookies) h.append("Set-Cookie", c);
-  return new Response(null, { status: 302, headers: h });
+  return new Response(null, { status, headers: h });
 };
 
 const loginFail = (reason, clearState, detail) => {
@@ -41,6 +41,10 @@ export default {
     const secure = url.protocol === "https:";
 
     try {
+      if (url.hostname === "auraea.fyi") {
+        return redirect(`https://www.auraea.fyi${url.pathname}${url.search}`, [], 301);
+      }
+
       const cookies = parseCookies(request.headers.get("Cookie"));
       const session = await verify(cookies[SESSION_COOKIE], env.SESSION_SECRET);
       const viewer = session ? { id: session.id, name: session.name, avatar: avatarUrl(session.id, session.avatar) } : null;
